@@ -1,11 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import {AppRoutesModule} from './app-routes.module';
 
 import { AppComponent } from './app.component';
 import {NotfoundComponent} from "./pages/notfound/notfound.component";
 import {HomeComponent} from "./pages/home/home.component";
 
-import {AppRoutesModule} from './app-routes.module';
+import {SocketService} from "./services/socket.service";
 
 
 @NgModule({
@@ -18,7 +19,7 @@ import {AppRoutesModule} from './app-routes.module';
     AppRoutesModule,
     BrowserModule
   ],
-  providers: [],
+  providers: [SocketService,],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

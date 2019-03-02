@@ -8,11 +8,12 @@ import {environment} from "../../environments/environment";
 
 export class SocketService {
   private socket: SocketIOClient.Socket;
+
   constructor() {
     this.socket = io(environment.serverUrl);
     // this.socket = io.connect();
   }
   getSocket() {
-    return this.socket;
+   return this.socket;
   }
 }
