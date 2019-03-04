@@ -54,7 +54,6 @@ create table if not exists presentations
 	id int auto_increment primary key,
 	title varchar(45) not null,
 	owner_id int not null,
-	password varchar(255) null,
 	deleted varchar(45) default '0' not null,
 	created timestamp null,
 	updated timestamp null,

@@ -36,3 +36,8 @@ if (preg_match_all("/[^A-Za-z]/", $firstname) > 0 || strlen($firstname) < 3) {
     //echo json_encode(array("message"=>"OK","status"=>200));
     echo register($firstname, $lastname, $username, $password, $con);
 }
+
+/**
+ * ElephantIO\Client;
+use ElephantIO\Engine\SocketIO\Version1X;
+*/
