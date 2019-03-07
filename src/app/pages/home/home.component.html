@@ -1,5 +1,33 @@
-<p>
-  home works!
+<div class="container">
+    <h1>Welcome to Anyslide</h1>
+    <button *ngIf="isregister" (click)="switch_view()">Login</button>
+    <button *ngIf="!isregister" (click)="switch_view()">Register</button>
+    <div *ngIf="isregister">
+        <h2>Register</h2>
+        <div class="alert alert-danger" *ngIf="error">{{message}}</div>
+        <div class="alert alert-success" *ngIf="success">{{message}}</div>
+        <div>
+            <div><input [(ngModel)]="firstname" type="text" placeholder="first name"></div>
+            <div><input [(ngModel)]="lastname" type="text" placeholder="last name"></div>
+            <div><input [(ngModel)]="username" type="text" placeholder="username"></div>
+            <div><input [(ngModel)]="email" type="email" placeholder="email"></div>
+            <div><input [(ngModel)]="password" type="password" placeholder="password"></div>
+            <div><input [(ngModel)]="cpassword" type="password" placeholder="Confirm password"></div>
+            <button (click)="register()"> Register</button>
+            <div>
+                I agree with the terms and privacy
+            </div>
+        </div>
+    </div>
 
-  welcome to the home page
-</p>
+    <div *ngIf="!isregister">
+        <h2>Login</h2>
+        <div class="alert alert-danger" *ngIf="error">{{message}}</div>
+        <div class="alert alert-success" *ngIf="success">{{message}}</div>
+        <div>
+            <div><input [(ngModel)]="username" type="text" placeholder="username"></div>
+            <div><input [(ngModel)]="password" type="password" placeholder="password"></div>
+            <button (click)="login()"> Login</button>
+        </div>
+    </div>
+</div>

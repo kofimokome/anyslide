@@ -12,6 +12,7 @@ export class PresentationComponent implements OnInit {
     private socket;
     private notguest;
     private reveal;
+    private fromsocket;
 
     constructor(private socketService: SocketService, private route: ActivatedRoute) {
         this.socket = socketService.getSocket();
@@ -19,6 +20,8 @@ export class PresentationComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.fromsocket = false;
+
         this.route.data
             .subscribe((data) => {
                 console.log(data);
@@ -61,10 +64,10 @@ export class PresentationComponent implements OnInit {
             ]
         });
         if (this.notguest) {
-            let self = this.socket;
+            let self = this;
             this.reveal.addEventListener('slidechanged', function (event) {
                 // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                self.emit("test_present", event.indexh, event.indexv, event.indexf);
+                self.socket.emit("test_present", event.indexh, event.indexv, event.indexf);
             });
         }
 
@@ -109,12 +112,20 @@ export class PresentationComponent implements OnInit {
 
     }
 
+    nextSlide() {
+        this.reveal.next();
+    }
+
+    prevSlide() {
+        this.reveal.prev();
+    }
+
     sockets() {
 
-        let rev = this.reveal;
+        let self = this;
         this.socket.on("testpresent", function (e) {
             console.log(e);
-            rev.slide(e.indexh, e.indexv, e.indexf);
+            self.reveal.slide(e.indexh, e.indexv, e.indexf);
         });
 
 

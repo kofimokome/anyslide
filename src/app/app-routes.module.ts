@@ -7,6 +7,7 @@ import {AppComponent} from "./app.component";
 import {NotfoundComponent} from "./pages/notfound/notfound.component";
 import {HomeComponent} from "./pages/home/home.component";
 import {PresentationComponent} from "./presentation/presentation.component";
+import {DashboardComponent} from "./pages/dashboard/dashboard.component";
 
 // Setting the routes
 const routes: Routes = [
@@ -14,6 +15,7 @@ const routes: Routes = [
     {path: 'presentation', component: PresentationComponent, data: {type: 'presenter', notguest: true}},
     {path: 'presentation/controller', component: PresentationComponent},
     {path: 'view/presentation', component: PresentationComponent, data: {notguest: false}},
+    {path: 'dashboard', component: DashboardComponent},
     {path: '404', component: NotfoundComponent},
     {path: '**', redirectTo: '/404', pathMatch: 'full'},
     // {path: '', redirectTo: '/login', pathMatch: 'full'},

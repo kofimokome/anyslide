@@ -86,32 +86,43 @@ function join_presentation(device, presentation_id) {
 
 //
 
-/* @return: interger */
+users.push(new User(0, 'bug')); //todo: address why the first index is not accessed by find_user();
+presentations.push(new Presentation(0, 0, 0, 0));
+collaborations.push(new Collaboration(0, 0));
+collaborators.push(new Collaborator(0, 0));
+
+/* @return: integer */
 function find_user(id) {
-    for (var i = 0; i < users.length; i++) {
+    let found = false;
+    let index = 0;
+    for (let i = 1; i < users.length; i++) {
         if (users[i].user_id == id) {
-            return i;
+            index = i;
+            found = true;
         }
     }
-    return false;
+    return found ? index : found;
 }
 
 /* Searches for a given user from his/her server id
 * @return: user_index
 */
 function findDeviceUser(device_id) {
+    let found = false;
+    let index = 0;
     for (let i = 1; i < users.length; i++) {
         for (let j = 0; j < users[i].devices.length; j++) {
-            if (users[i].devices[j].device_id === device_id) {
-                return users[i];
+            if (users[i].devices[j].device_id == device_id) {
+                index = i;
+                found = true;
             }
         }
     }
-    return false;
+    return found ? index : found;
 }
 
 function presentation_exist(presentation_id) {
-    for (var i = 0; i < presentations.length; i++) {
+    for (var i = 1; i < presentations.length; i++) {
         if (presentations[i].presentation_id == presentation_id) {
             return i;
         }
@@ -162,11 +173,11 @@ io.on('connection', function (socket) {
     // Emitted when a user logs in
     socket.on('register_user', function (user_id, username) {
         if (find_user(user_id)) {
-            let user_index = find_user(id);
+            let user_index = find_user(user_id);
             let device = new Device(socket.id);
             users[user_index].devices.push(device);
 
-            logData("New device: " + socket.id + " assigned to " + username);
+            logData("Another new device: " + socket.id + " assigned to " + username);
         } else {
             let device = [];
             device.push(new Device(socket.id));
@@ -176,7 +187,8 @@ io.on('connection', function (socket) {
 
             logData(user_id + " has been registered ");
 
-            logData("New device: " + socket.id + " assigned to " + user_id);
+            logData("A new device: " + socket.id + " assigned to " + username);
+            console.log(users);
         }
     });
 
@@ -219,6 +231,9 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('testing', function (data) {
+        logData("testing got " + data);
+    });
     socket.on('test_present', function (indexh, indexv, indexf) {
         let position = {indexh: indexh, indexv: indexv, indexf: indexf};
         logData("received " + indexh + " " + indexv + " " + indexf);
@@ -236,14 +251,24 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         // delete and notify users if user was on a presentation
         let user_index = findDeviceUser(socket.id);
-        for (let i = 0; i < presentations.length; i++) {
-            if ((users[user_index].user_id == presentations[i].user_id) && (socket.id == presentations[i].device_id)) {
-                presentations.splice(i, 1);
-                io.to(socket.id).emit('presentation' + presentations[i].presentation_id).emit("leavePresentation");
+        if (user_index) {
+            for (let i = 0; i < presentations.length; i++) {
+                if ((users[user_index].user_id == presentations[i].user_id) && (socket.id == presentations[i].device_id)) {
+                    presentations.splice(i, 1);
+                    io.to(socket.id).emit('presentation' + presentations[i].presentation_id).emit("leavePresentation");
+                }
             }
+
+            for (let i = 0; i < users[user_index].devices.length; i++) {
+                if (users[user_index].devices[i].device_id == socket.id) {
+                    users[user_index].devices.splice(i, 1);
+                    logData("device " + socket.id + " has been removed from " + users[user_index].username);
+                }
+            }
+        } else {
+            //myArray.splice(0, 1)
+            logData("Client Disconnected: " + socket.id);
         }
-        //myArray.splice(0, 1)
-        logData("Client Disconnected: " + socket.id);
     });
 
 });

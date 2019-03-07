@@ -11,7 +11,7 @@ if ($con->connect_errno) {
     echo json_encode($error);
     die();
 }
-$query = "create database if not exists" . $dbname;
+$query = "create database if not exists " . $dbname;
 if (!$con->query($query)) {
     $error = array("message" => "could not create database", "success" => false);
     echo json_encode($error);
@@ -27,7 +27,7 @@ if (!$con->select_db($dbname)) {
     die();
 }
 $query = "
-create table  if not exists users
+create table if not exists users
 (
 	id int auto_increment primary key,
 	f_name varchar(45) null,
@@ -47,8 +47,15 @@ create table  if not exists users
 		unique (email),
 	constraint phone_UNIQUE
 		unique (phone)
-);
+)";
+if (!$con->query($query)) {
+    $error = array("message" => "an error occurred when creating tables", "success" => false);
+    echo json_encode($error);
+    //echo $con->error;
+    die();
+}
 
+$query = "
 create table if not exists presentations
 (
 	id int auto_increment primary key,
@@ -59,8 +66,15 @@ create table if not exists presentations
 	updated timestamp null,
 	constraint id_UNIQUE
 		unique (id)
-);
+)";
+if (!$con->query($query)) {
+    $error = array("message" => "an error occurred when creating tables", "success" => false);
+    echo json_encode($error);
+    //echo $con->error;
+    die();
+}
 
+$query = "
 create table if not exists slides
 (
 	id int auto_increment primary key,
@@ -72,8 +86,15 @@ create table if not exists slides
 	updated timestamp null,
 	constraint id_UNIQUE
 		unique (id)
-);
+)";
+if (!$con->query($query)) {
+    $error = array("message" => "an error occurred when creating tables", "success" => false);
+    echo json_encode($error);
+    //echo $con->error;
+    die();
+}
 
+$query = "
 create table if not exists collaborations
 (
 	id int auto_increment primary key,
@@ -81,8 +102,15 @@ create table if not exists collaborations
 	deleted int default '0' not null,
 	constraint id_UNIQUE
 		unique (id)
-);
+)";
+if (!$con->query($query)) {
+    $error = array("message" => "an error occurred when creating tables", "success" => false);
+    echo json_encode($error);
+    //echo $con->error;
+    die();
+}
 
+$query = "
 create table if not exists collaborators
 (
 	id int auto_increment primary key,
@@ -90,12 +118,10 @@ create table if not exists collaborators
 	user_id int not null,
 	constraint id_UNIQUE
 		unique (id)
-); 
-
-";
+)";
 if (!$con->query($query)) {
     $error = array("message" => "an error occurred when creating tables", "success" => false);
     echo json_encode($error);
-    //$con->error;
+    //echo $con->error;
     die();
 }

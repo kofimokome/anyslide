@@ -10,34 +10,39 @@ $lastname = $request->lastname;
 $username = $request->username;
 $password = $request->password;
 $confirm_password = $request->cpassword;
+$email = $request->email;
 
 if (preg_match_all("/[^A-Za-z]/", $firstname) > 0 || strlen($firstname) < 3) {
-    $error = array("message" => "Enter a valid first name", "success" => false); // FNIC = First Name Incorrect
-    // $error = array("message" => "FNICv"); // FNIC = First Name Incorrect
+    $error = array("message" => "Enter a valid first name", "success" => false);
     echo json_encode($error);
     die();
 } elseif (preg_match_all("/[^A-Za-z]/", $lastname) > 0 || strlen($lastname) < 3) {
-    $error = array("message" => "Enter a valid last name", "success" => false); // LNIC = Last Name Incorrect
+    $error = array("message" => "Enter a valid last name", "success" => false);
     echo json_encode($error);
     die();
 } elseif (preg_match_all("/[^a-z]/", $username) > 0 || strlen($username) < 3) {
-    $error = array("message" => "Enter a valid user name", "success" => false); // UNIC = User Name Incorrect
+    $error = array("message" => "Enter a valid user name", "success" => false);
+    echo json_encode($error);
+    die();
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $error = array("message" => "Enter a valid email address", "success" => false);
     echo json_encode($error);
     die();
 } elseif ($password == '' || strlen($password) < 8) {
-    $error = array("message" => "Enter a valid password", "success" => false); // PWIN = Password Incorrect
+    $error = array("message" => "Enter a valid password", "success" => false);
     echo json_encode($error);
     die();
 } elseif ($password != $confirm_password) {
-    $error = array("message" => "Passwords do not match", "success" => false); // PWNM = Password Not Match
+    $error = array("message" => "Passwords do not match", "success" => false);
     echo json_encode($error);
     die();
 } else {
     //echo json_encode(array("message"=>"OK","status"=>200));
-    echo register($firstname, $lastname, $username, $password, $con);
+    $password = password_hash($password, PASSWORD_DEFAULT);
+    echo register($firstname, $lastname, $username, $password, $email, $con);
 }
 
 /**
  * ElephantIO\Client;
-use ElephantIO\Engine\SocketIO\Version1X;
-*/
+ * use ElephantIO\Engine\SocketIO\Version1X;
+ */

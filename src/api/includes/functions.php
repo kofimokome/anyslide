@@ -11,44 +11,47 @@ function login($username, $password, $connection)
     if ($result = $connection->query($query)) {
         $row = $result->fetch_object();
         if (is_null($row)) {
-            $error = array("message" => "LIUNF"); // LIUNF = Log In User Not Found
+            $error = array("message" => "User name not found", "success" => false, "code" => 201); // LIUNF = Log In User Not Found
             return json_encode($error);
         } else {
-            if ($password == $row->password) {
+            if (password_verify($password, $row->password)) {
                 unset($row->password);
                 $row->message = "OK";
+                $row->success = true;
+                $row->code = 200;
+
+                // todo: add stuffs to the node server, list of collaborations etc.
+                /*$redis = new Redis();
+                $redis->connect('localhost',8890);
+                $redis->publish('testing',"hi there");*/
+
                 return json_encode($row);
             } else {
-                return json_encode(array("message" => "LIIP")); // LIIP = Log In Incorrect Password
+                return json_encode(array("message" => "Incorrect password", "success" => false, "code" => 202)); // LIIP = Log In Incorrect Password
             }
         }
     } else {
-        $error = array("message" => "error");
+        $error = array("message" => "error", "success" => false, "code" => 203);
         return json_encode($error);
     }
 }
 
-function register($firstname, $lastname, $username, $password, $connection)
+function register($firstname, $lastname, $username, $password, $email, $connection)
 {
     $userExist = json_decode(login($username, " ", $connection));
-    if ($userExist->message == "LIUNF") {
-        if ($connection->query("insert into users values(null,'{$firstname}','{$lastname}','{$username}','{$password}',0,0,now(),0)")) {
-            $login = json_decode(login($username, $password, $connection));
-            if ($login->message == "OK") {
-                return json_encode($login);
-            } else {
-                $error = array("message" => "success");
-                return json_encode($error);
-            }
+    if ($userExist->code == 201) {
+        if ($connection->query("insert into users values(null,'{$firstname}','{$lastname}','{$username}','{$email}',null,'{$password}',0,now(),now())")) {
+            $return = array("message" => "Your account has been created. Please login", "success" => true);;
+            return json_encode($return);
         } else {
-            $error = array("message" => "error");
+            $error = array("message" => "Please try a different email. If error persists, contact customer service", "success" => false);
             return json_encode($error);
         }
-    } elseif ($userExist->message == "LIIP") {
-        $error = array("message" => "UNAT");
+    } elseif ($userExist->code == 202) {
+        $error = array("message" => "User name aleady taken", "success" => false);
         return json_encode($error);
     } else {
-        $error = array("message" => "error");
+        $error = array("message" => "An error has occured, please try again", "success" => false);
         return json_encode($error);
     }
 }

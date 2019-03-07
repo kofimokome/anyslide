@@ -19,5 +19,5 @@ if($result = $con->query("insert into chats values(null,{$session},{$user},\"{$m
 
 
 $redis = new Redis();
-$redis->connect('127.0.0.1');
-$redis->publish('message',json_encode($_POST));
+$redis->connect('localhost',8890);
+$redis->publish('test_present',"how");
