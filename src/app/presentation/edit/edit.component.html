@@ -2,17 +2,32 @@
     <div *ngIf="loading">Loading presentation</div>
     <div *ngIf="!loading">
         <div class="row">
+            <div class="col-12">
+                <button (click)="saveSlides()">Save</button>
+                <button (click)="startPresentation()">present</button>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-2">
-                <div *ngFor="let slide of slides">
-                    <div (click)="setContent(slide.content)"> Slide {{ slide.id }}</div>
+                <div *ngFor="let slide of slides; let i = index">
+                    <div (click)="setContent(slide, i)"> Slide {{ i + 1}}</div>
+                    <textarea style="display: block;" [(ngModel)]="slides[i].content">{{slide.content}}</textarea>
                 </div>
                 <div>
                     <button (click)="newSlide()"> new slide</button>
                 </div>
             </div>
             <div class="col-10">
-                {{slide_content}}
+                <div id="editor">
+                    {{slide_content}}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!--
+<div *ngFor="let slide of slides; let i = index">
+    <div (click)="setContent(slide, i)"> Slide {{ slide.id }}</div>
+    <textarea style="display: block;" [(ngModel)]="slides[i].content">{{slide.content}}</textarea>
+</div>-->
