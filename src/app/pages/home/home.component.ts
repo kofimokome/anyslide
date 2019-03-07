@@ -63,7 +63,6 @@ export class HomeComponent implements OnInit {
                         // some clean up
                         this.username = '';
                         this.password = '';
-                        console.log(response);
                         UserService.setUser(response.id, response.username);
                         this.socket.emit('register_user', response.id, response.username);
                         this.router.navigate(['/dashboard']);

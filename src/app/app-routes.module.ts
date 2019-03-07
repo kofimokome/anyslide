@@ -6,15 +6,17 @@ import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from "./app.component";
 import {NotfoundComponent} from "./pages/notfound/notfound.component";
 import {HomeComponent} from "./pages/home/home.component";
-import {PresentationComponent} from "./presentation/presentation.component";
+import {PresentationComponent} from "./presentation/view/presentation.component";
 import {DashboardComponent} from "./pages/dashboard/dashboard.component";
+import {EditComponent} from "./presentation/edit/edit.component";
 
 // Setting the routes
 const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'presentation', component: PresentationComponent, data: {type: 'presenter', notguest: true}},
     {path: 'presentation/controller', component: PresentationComponent},
-    {path: 'view/presentation', component: PresentationComponent, data: {notguest: false}},
+    {path: 'presentation/view', component: PresentationComponent, data: {notguest: false}},
+    {path: 'presentation/edit/:id', component: EditComponent},
     {path: 'dashboard', component: DashboardComponent},
     {path: '404', component: NotfoundComponent},
     {path: '**', redirectTo: '/404', pathMatch: 'full'},

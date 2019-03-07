@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import * as Reveal from "../../../node_modules/reveal.js"
-import {SocketService} from "../services/socket.service";
+import * as Reveal from "../../../../node_modules/reveal.js"
+import {SocketService} from "../../services/socket.service";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({

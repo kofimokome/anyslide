@@ -56,27 +56,14 @@ function register($firstname, $lastname, $username, $password, $email, $connecti
     }
 }
 
-function create_session($user, $password, $connection)
+function create_presentation($name, $user, $connection)
 {
-    if ($result = $connection->query("SELECT MAX(id) FROM sessions")) {
-        $result = $result->fetch_assoc();
-        $last = $result['MAX(id)'];
-        unset($result);
-        $game_id = $last + 1;
-        $name = "game" . $game_id;
-        $query = "insert into sessions values(null,{$user},'{$name}','{$password}',1,0,0)";
-        if ($connection->query($query)) {
-            $query = "insert into players values(null,{$game_id},{$user},1,now())";
-            if ($connection->query($query)) {
-                return json_encode(array("name" => $name, "key" => $password, "message" => 'OK'));
-            } else {
-                return json_encode(array("message" => 'error'));
-            }
-        } else {
-            return json_encode(array("message" => 'error'));
-        }
+    $query = "insert into presentations values(null,{$name},'{$user}',0,now(),now())";
+    if ($connection->query($query)) {
+        $presentation_id = $connection->insert_id;
+        return json_encode(array("id" => $presentation_id, "message" => "OK", "success" => true));
     } else {
-        return json_encode(array("message" => 'error'));
+        return json_encode(array("message" => 'error', 'success' => false));
     }
 }
 

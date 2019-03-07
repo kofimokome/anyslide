@@ -1,3 +1,23 @@
 <p>
-  dashboard works!
+    dashboard works!
 </p>
+
+<div *ngIf="loading">
+    Your profile is loading
+</div>
+
+<div *ngIf="!loading">
+    Your profile has loaded
+
+    <div *ngFor="let presentation of presentations">
+        <div>
+            <a href="">{{presentation}}</a>
+        </div>
+    </div>
+
+    <div>
+        <input type="text" [(ngModel)]="name"> <br>
+        <button (click)="newPresentation()">Create a new presentation</button>
+    </div>
+    <div *ngIf="error" class="alert alert-danger"> Please Enter a presentation name</div>
+</div>
