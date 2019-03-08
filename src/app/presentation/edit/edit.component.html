@@ -4,7 +4,14 @@
         <div class="row">
             <div class="col-12">
                 <button (click)="saveSlides()">Save</button>
-                <button (click)="startPresentation()">present</button>
+                <button (click)="startPresentation(true, '')">public present</button>
+                <button (click)="startPresentation(false, 'secret')">private present</button>
+                <div class="alert alert-info">
+                    http://localhost:4200/presentation/view/{{message}}
+                </div>
+                <a [routerLink]="['/presentation/'+message]">
+                    Open presentation
+                </a>
             </div>
         </div>
         <div class="row">
@@ -18,9 +25,10 @@
                 </div>
             </div>
             <div class="col-10">
-                <div id="editor">
-                    {{slide_content}}
-                </div>
+                loading editor ...
+                <editor [(ngModel)]="current_content" apiKey="322jkzr836cni3de8e7i7ct35g21gro5w3qxua7e5tpi977y"
+                        [init]="{plugins: ['lists','link'], height : '100%', toolbar:'undo redo | fontsizeselect fontselect | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'}"
+                        style="width: 100%; height: 100%"></editor>
             </div>
         </div>
     </div>

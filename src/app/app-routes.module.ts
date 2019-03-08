@@ -13,9 +13,9 @@ import {EditComponent} from "./presentation/edit/edit.component";
 // Setting the routes
 const routes: Routes = [
     {path: '', component: HomeComponent},
-    {path: 'presentation', component: PresentationComponent, data: {type: 'presenter', notguest: true}},
+    {path: 'presentation/:id', component: PresentationComponent, data: {type: 'presenter', notguest: true}},
     {path: 'presentation/controller', component: PresentationComponent},
-    {path: 'presentation/view', component: PresentationComponent, data: {notguest: false}},
+    {path: 'presentation/view/:id', component: PresentationComponent, data: {notguest: false}},
     {path: 'presentation/edit/:id', component: EditComponent},
     {path: 'dashboard', component: DashboardComponent},
     {path: '404', component: NotfoundComponent},

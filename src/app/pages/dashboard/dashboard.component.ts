@@ -30,7 +30,6 @@ export class DashboardComponent implements OnInit {
         if (!UserService.isAuthenticated()) {
             this.router.navigate(['/']);
         } else {
-            this.socket.emit('register_user', UserService.getUserId(), UserService.getUserName());
             let data = {
                 user_id: UserService.getUserId(),
             };

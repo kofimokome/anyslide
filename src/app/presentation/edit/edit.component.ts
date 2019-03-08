@@ -3,8 +3,9 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {UserService} from "../../services/user.service";
-import * as Quill from "../../../../node_modules/quill";
-import * as Delta from "../../../../node_modules/quill-delta";
+import {SocketService} from "../../services/socket.service";
+import {EditorComponent, EditorModule} from "@tinymce/tinymce-angular";
+
 
 @Component({
     selector: 'app-edit',
@@ -15,27 +16,30 @@ export class EditComponent implements OnInit {
     private edit_id;
     private loading;
     private slides: any[];
-    private slide_content: string;
     private editor: any;
     private editor_initialised;
     private current_slide: any;
+    private current_content: string;
     private current_index;
+    private socket;
+    private message;
 
-    constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {
+    constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService) {
+        this.socket = this.socketService.getSocket();
     }
 
     ngOnInit() {
         this.current_slide = null;
         this.editor_initialised = false;
         this.loading = true;
-        this.slide_content = '';
         this.route.params.subscribe((params: ParamMap) => {
             this.edit_id = params['id'];
             console.log(this.edit_id);
         });
         let data = {
             user_id: UserService.getUserId(),
-            presentation_id: this.edit_id
+            presentation_id: this.edit_id,
+            type: 'edit',
         };
         this.http.post(environment.apiRoot + 'get_slides.php', data, {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
@@ -43,10 +47,9 @@ export class EditComponent implements OnInit {
             .subscribe((response: any) => {
                     if (response.success) {
                         console.log(response);
-                        for (let i = 0; i < response.slides.length; i++) {
-                            //response.slides[i].content = new Delta(JSON.parse(response.slides[i].content));
-                        }
                         this.slides = response.slides;
+                        this.current_content = this.slides[0].content;
+                        this.current_index = 0;
                         //console.log(this.slides);
                         this.loading = false;
 
@@ -62,6 +65,8 @@ export class EditComponent implements OnInit {
                     console.error('Failed decline request ', error);
                 },
             );
+
+        this.sockets();
     }
 
     newSlide() {
@@ -94,33 +99,33 @@ export class EditComponent implements OnInit {
         if (this.current_slide == null) {
             this.current_slide = slide;
         } else {
-            this.slides[this.current_index].content = this.editor.getContents();
+            this.slides[this.current_index].content = this.current_content;
         }
         if (!this.editor_initialised) {
-            this.editor = new Quill('#editor', {
+            /*this.editor = new Quill('#editor', {
                 theme: 'snow'
-            });
+            });*/
 
             this.editor_initialised = true;
         }
         this.current_index = index;
-        this.editor.setContents(slide.content);
+        this.current_content = this.slides[this.current_index].content;
+
+        //this.editor.setContents(slide.content);
 
     }
 
     saveSlides() {
         if (this.current_slide != null) {
-            //this.slides[this.current_index].content = this.editor.getContents();
+            this.slides[this.current_index].content = this.current_content;
         }
 
-        let temp_slides = JSON.parse(JSON.stringify(this.slides));
-        for (let i = 0; i < temp_slides.length; i++) {
-            temp_slides[i].content = JSON.stringify(temp_slides[i].content);
-        }
+        //let temp_slides = JSON.parse(JSON.stringify(this.slides));
+
         let data = {
             user_id: UserService.getUserId(),
             presentation_id: this.edit_id,
-            slides: temp_slides,
+            slides: this.slides,
         };
 
         //console.log(data.slides);
@@ -142,8 +147,24 @@ export class EditComponent implements OnInit {
             );
     }
 
-    startPresentation() {
+    startPresentation(ispublic: boolean, password: string) {
+        if (ispublic) {
+            this.socket.emit("create_presentation", this.edit_id, false);
+        } else {
+        }
+    }
 
+    sockets() {
+        let self = this;
+        this.socket.on("joinPresentation", (response) => {
+            console.log(response);
+            if (response.status) {
+                self.message =  response.id;
+                //this.router.navigate(['/presentation/' + response.id]);
+            } else {
+                self.message = "not created";
+            }
+        })
     }
 
 }

@@ -135,7 +135,7 @@ function is_device_allowed(device_id, type_id, type) {
     switch (type) {
         case "present":
             for (var i = 0; i < presentations.length; i++) {
-                if (presentations[i].owner_id == user.user_id) {
+                if (presentations[i].owner_id == users[user].user_id) {
                     return true;
                 }
             }
@@ -192,18 +192,24 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('create_presentation', function (password) {
+    socket.on('create_presentation', function (presentation_id, password) {
         if (findDeviceUser(socket.id)) {
             const cryptr_presentation_id = cryptr.encrypt(presentation_id);
-            let user_index = findDeviceUser(socket.id);
-            let presentation = new Presentation(presentation_id, users[user_index].user_id, socket.id, password);
-            presentation_id++;
-            let result = {status: true};
-            socket.join("presentation" + presentation_id);
-            io.to(socket.id).emit('joinPresentation', result);
-            logData(users[user_index].username + " created presentation " + presentation_id);
+            if (presentation_exist(presentation_id)) {
+                let result = {status: false, message: "presentation already exists"};
+                io.to(socket.id).emit('joinPresentation', result);
+            } else {
+                let user_index = findDeviceUser(socket.id);
+                let presentation = new Presentation(cryptr_presentation_id, users[user_index].user_id, socket.id, password);
+                presentations.push(presentation);
+                console.log(presentation);
+                let result = {status: true, id: cryptr_presentation_id};
+                // socket.join("presentation" + cryptr_presentation_id);
+                io.to(socket.id).emit('joinPresentation', result);
+                logData(users[user_index].username + " created presentation " + cryptr_presentation_id);
+            }
         } else {
-            let result = {status: false};
+            let result = {status: false, message: "user not yet registered. Please refresh this page and try again"};
             io.to(socket.id).emit('joinPresentation', result);
         }
     });
@@ -212,15 +218,16 @@ io.on('connection', function (socket) {
         if (presentation_exist(presentation_id)) {
             let presentation_index = presentation_exist(presentation_id);
             if (password == presentations[presentation_index].password) {
-                let result = {status: true};
+                let result = {status: true, id: cryptr.decrypt(presentation_id)};
                 socket.join("presentation" + presentation_id);
                 io.to(socket.id).emit('joinPresentation', result);
                 if (findDeviceUser(socket.id)) {
-                    logData("Device: " + users[findDeviceUser(socket.id)].username + " joined presentation" + presentation_id);
+                    logData("Device: " + users[findDeviceUser(socket.id)].username + " joined presentation " + presentation_id);
                 } else {
                     logData("Device: " + socket.id + " joined presentation" + presentation_id);
                 }
             } else {
+                console.log(presentations[presentation_index]);
                 let result = {status: false, message: "Presentation password is not correct"};
                 io.to(socket.id).emit('joinPresentation', result);
             }
@@ -244,7 +251,10 @@ io.on('connection', function (socket) {
     socket.on('update_presentation', function (presentation_id, indexh, indexv, indexf) {
         if (is_device_allowed(socket.id, presentation_id, "present")) {
             let next = {indexh: indexh, indexv: indexv, indexf: indexf};
+            logData("received " + indexh + " " + indexv + " " + indexf);
             socket.broadcast.to("presentation" + presentation_id).emit('update_slide', next);
+        }else{
+            logData("refues");
         }
     });
 
@@ -253,9 +263,10 @@ io.on('connection', function (socket) {
         let user_index = findDeviceUser(socket.id);
         if (user_index) {
             for (let i = 0; i < presentations.length; i++) {
-                if ((users[user_index].user_id == presentations[i].user_id) && (socket.id == presentations[i].device_id)) {
-                    presentations.splice(i, 1);
+                if ((users[user_index].user_id == presentations[i].owner_id) && (socket.id == presentations[i].device_id)) {
+                    logData("presentation " + presentations[i].presentation_id + " has been deleted");
                     io.to(socket.id).emit('presentation' + presentations[i].presentation_id).emit("leavePresentation");
+                    presentations.splice(i, 1);
                 }
             }
 

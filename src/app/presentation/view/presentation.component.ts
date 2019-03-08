@@ -1,7 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import * as Reveal from "../../../../node_modules/reveal.js"
 import {SocketService} from "../../services/socket.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, ParamMap} from "@angular/router";
+import {UserService} from "../../services/user.service";
+import {environment} from "../../../environments/environment";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Component({
     selector: 'app-presentation',
@@ -13,23 +16,36 @@ export class PresentationComponent implements OnInit {
     private notguest;
     private reveal;
     private fromsocket;
+    private presentation_id;
+    private loading;
+    private presentation_content: string;
+    private slides;
+    private presentation_link;
 
-    constructor(private socketService: SocketService, private route: ActivatedRoute) {
+    constructor(private socketService: SocketService, private route: ActivatedRoute, private http: HttpClient) {
         this.socket = socketService.getSocket();
         this.reveal = Reveal;
     }
 
     ngOnInit() {
         this.fromsocket = false;
+        this.loading = true;
+        this.presentation_content = '';
 
         this.route.data
             .subscribe((data) => {
                 console.log(data);
                 this.notguest = data.notguest;
             });
-        this.addScript();
-        this.startPresentation();
+        this.route.params.subscribe((params: ParamMap) => {
+            this.presentation_link = params['id'];
+            console.log(this.presentation_link);
+        });
+        this.socket.emit("join_presentation", this.presentation_link, false);
+        //this.getSlides();
         this.sockets();
+        //this.addScript();
+        //this.startPresentation();
     }
 
     private startPresentation() {
@@ -67,7 +83,7 @@ export class PresentationComponent implements OnInit {
             let self = this;
             this.reveal.addEventListener('slidechanged', function (event) {
                 // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                self.socket.emit("test_present", event.indexh, event.indexv, event.indexf);
+                self.socket.emit("update_presentation",self.presentation_link, event.indexh, event.indexv, event.indexf);
             });
         }
 
@@ -120,15 +136,63 @@ export class PresentationComponent implements OnInit {
         this.reveal.prev();
     }
 
+    getSlides() {
+        let data = {
+            // user_id: UserService.getUserId(),
+            presentation_id: this.presentation_id,
+            //presentation_id: 1,
+            type: 'view',
+        };
+        this.http.post(environment.apiRoot + 'get_slides.php', data, {
+            headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+        })
+            .subscribe((response: any) => {
+                    if (response.success) {
+                        console.log(response);
+                        this.slides = response.slides;
+                        this.addScript();
+                        //this.loading = false;
+                        this.startPresentation();
+                        //console.log(this.slides);
+
+                    } else {
+                        if (response.code == 404) {
+                            //this.router.navigate(['/404']);
+                        } else {
+                            console.log(response);
+                        }
+                    }
+                },
+                (error) => {
+                    console.error('Failed decline request ', error);
+                },
+            );
+    }
+
     sockets() {
 
         let self = this;
-        this.socket.on("testpresent", function (e) {
+        /*this.socket.on("testpresent", function (e) {
             console.log(e);
             self.reveal.slide(e.indexh, e.indexv, e.indexf);
+        });*/
+
+
+        this.socket.on("joinPresentation", (response) => {
+            console.log(response);
+            if (response.status) {
+                this.presentation_id = response.id;
+                this.getSlides();
+
+            } else {
+                // do something
+            }
         });
 
-
+        this.socket.on("update_slide", (e) => {
+            console.log("something");
+            this.reveal.slide(e.indexh, e.indexv, e.indexf);
+        });
         // all sockets go here
     }
 }
