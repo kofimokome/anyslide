@@ -75,11 +75,12 @@ if (!$con->query($query)) {
 }
 
 $query = "
-create table if not exists slides
+create table slides
 (
-	id int auto_increment primary key,
+	id int auto_increment
+		primary key,
 	presentation_id int not null,
-	content varchar(255) null,
+	content longtext null,
 	creator_id int not null,
 	deleted int default '0' not null,
 	created timestamp null,
