@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
     private success;
     private message: string;
     public isregister;
+    public loading;
 
     constructor(private router: Router, private socketService: SocketService, private http: HttpClient) {
         this.socket = socketService.getSocket();
@@ -33,8 +34,9 @@ export class HomeComponent implements OnInit {
         this.error = false;
         this.success = false;
         this.isregister = true;
+        this.loading = false;
 
-        if(UserService.isAuthenticated()){
+        if (UserService.isAuthenticated()) {
             this.router.navigate(['/dashboard']);
         }
     }
@@ -48,6 +50,7 @@ export class HomeComponent implements OnInit {
     login() {
         this.error = false;
         this.success = false;
+        this.loading = true;
         const data = {
             username: this.username,
             password: this.password,
@@ -56,6 +59,7 @@ export class HomeComponent implements OnInit {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
+                    this.loading = false;
                     if (response.success) {
                         this.success = true;
                         this.message = response.message;
@@ -81,13 +85,14 @@ export class HomeComponent implements OnInit {
             );
     }
 
-    receiveMessage($event){
+    receiveMessage($event) {
         this.switch_view();
     }
 
     register() {
         this.error = false;
         this.success = false;
+        this.loading = true;
         const data = {
             firstname: this.firstname,
             lastname: this.lastname,
@@ -100,6 +105,7 @@ export class HomeComponent implements OnInit {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
+                    this.loading = false;
                     if (response.success) {
                         this.success = true;
                         this.message = response.message;
