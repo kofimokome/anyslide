@@ -1,33 +1,94 @@
+<div class="transparent-div">
+    <div class="container">
+        <app-navbar></app-navbar>
+    </div>
+</div>
 <div class="container">
-    <h1>Welcome to Anyslide</h1>
-    <button *ngIf="isregister" (click)="switch_view()">Login</button>
-    <button *ngIf="!isregister" (click)="switch_view()">Register</button>
-    <div *ngIf="isregister">
-        <h2>Register</h2>
-        <div class="alert alert-danger" *ngIf="error">{{message}}</div>
-        <div class="alert alert-success" *ngIf="success">{{message}}</div>
-        <div>
-            <div><input [(ngModel)]="firstname" type="text" placeholder="first name"></div>
-            <div><input [(ngModel)]="lastname" type="text" placeholder="last name"></div>
-            <div><input [(ngModel)]="username" type="text" placeholder="username"></div>
-            <div><input [(ngModel)]="email" type="email" placeholder="email"></div>
-            <div><input [(ngModel)]="password" type="password" placeholder="password"></div>
-            <div><input [(ngModel)]="cpassword" type="password" placeholder="Confirm password"></div>
-            <button (click)="register()"> Register</button>
-            <div>
-                I agree with the terms and privacy
+    <div class="row">
+
+        <div class="col-md-5 transparent-div"
+             style="border-radius: 10px; margin-top: 50px; padding-top: 30px; padding-bottom: 30px;">
+
+            <div *ngIf="isregister">
+                <h2>Create an account, it's free</h2>
+                <div class="alert alert-danger" *ngIf="error">{{message}}</div>
+                <div class="alert alert-success" *ngIf="success">{{message}}</div>
+                <div class="home-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input [(ngModel)]="firstname" type="text" placeholder="first name"
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input [(ngModel)]="lastname" type="text" placeholder="last name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input [(ngModel)]="username" type="text" placeholder="username" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input [(ngModel)]="email" type="email" placeholder="email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input [(ngModel)]="password" type="password" placeholder="password"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input [(ngModel)]="cpassword" type="password" placeholder="Confirm password"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button (click)="register()" class="btn btn-primary btn-block"> Register</button>
+                            <div>
+                                By clicking the register button, you agree with the terms and privacy. <br>
+                                Already have an account? <a href="#" *ngIf="isregister"
+                                                            (click)="switch_view()">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div *ngIf="!isregister">
+                <h2>Login</h2>
+                <div class="alert alert-danger" *ngIf="error">{{message}}</div>
+                <div class="alert alert-success" *ngIf="success">{{message}}</div>
+                <div class="home-form">
+                    <div class="row">
+                        <div class="col-12">
+                            <input [(ngModel)]="username" type="text" placeholder="username" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <input [(ngModel)]="password" type="password" placeholder="password"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button (click)="login()" class="btn btn-primary btn-block"> Login</button>
+                            <div>
+                                Don't yet have an account? <a href="#" *ngIf="!isregister" (click)="switch_view()">Register</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div *ngIf="!isregister">
-        <h2>Login</h2>
-        <div class="alert alert-danger" *ngIf="error">{{message}}</div>
-        <div class="alert alert-success" *ngIf="success">{{message}}</div>
-        <div>
-            <div><input [(ngModel)]="username" type="text" placeholder="username"></div>
-            <div><input [(ngModel)]="password" type="password" placeholder="password"></div>
-            <button (click)="login()"> Login</button>
+        <div class="col-md-5" style="margin-top: 50px; ">
+            <img src="assets/images/logo.png" alt="" style="height: 33em">
         </div>
     </div>
 </div>
+<app-footer></app-footer>

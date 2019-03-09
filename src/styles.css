@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+
+body{
+    background-image: url("https://source.unsplash.com/collection/2203755/1600x900");
+    background-repeat: no-repeat;
+}
+/* Home page*/
+.home-form .row{
+    margin-bottom: 20px;
+}
+
+.transparent-div{
+    background-color: rgba(255,255,255,0.6);
+}
+
+a{
+    color: black;
+}

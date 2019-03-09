@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
-  apiRoot: 'http://localhost/anyslide/src/api/',
-  //serverUrl: 'http://localhost:8890'
+    production: true,
+    apiRoot: 'https://cors-anywhere.herokuapp.com/https://kofitoe.000webhostapp.com/api/',
+    serverUrl: 'https://anyslide.herokuapp.com/'
 };

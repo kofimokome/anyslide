@@ -15,6 +15,8 @@ import {SocketService} from "./services/socket.service";
 import {UserService} from "./services/user.service";
 import {HttpModule} from "@angular/http";
 import {EditComponent} from "./presentation/edit/edit.component";
+import {NavbarComponent} from "./partials/navbar/navbar.component";
+import {FooterComponent} from "./partials/footer/footer.component";
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import {EditComponent} from "./presentation/edit/edit.component";
         HomeComponent,
         PresentationComponent,
         DashboardComponent,
-        EditComponent
+        EditComponent,
+        NavbarComponent,
+        FooterComponent
     ],
     imports: [
         AppRoutesModule,

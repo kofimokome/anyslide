@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiRoot: 'http://192.168.10.102/anyslide/src/api/',
-  serverUrl: 'http://192.168.10.102:8890'
+  apiRoot: 'http://localhost/anyslide/src/api/',
+  serverUrl: 'http://localhost:8890'
 };
 
 /*
