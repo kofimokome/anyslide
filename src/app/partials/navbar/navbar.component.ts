@@ -1,15 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Output, OnInit, EventEmitter, ViewChild} from '@angular/core';
+import {HomeComponent} from "../../pages/home/home.component";
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
 
-  constructor() { }
+    @Output() messageEvent = new EventEmitter<string>();
+    @ViewChild(HomeComponent) child;
+    public isregister;
 
-  ngOnInit() {
-  }
+    constructor() {
+    }
+
+    ngOnInit() {
+        this.isregister = false;
+    }
+
+    switch_buttons() {
+        this.isregister = !this.isregister;
+    }
+
+    ngAfterViewInit() {
+        //this.isregister = this.child.isregister;
+       // console.log(this.child.isregister);
+    }
+
+    sendMessage() {
+        this.messageEvent.emit();
+        this.switch_buttons();
+    }
+
 
 }

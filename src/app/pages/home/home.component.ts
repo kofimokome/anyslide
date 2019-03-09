@@ -79,6 +79,10 @@ export class HomeComponent implements OnInit {
             );
     }
 
+    receiveMessage($event){
+        this.switch_view();
+    }
+
     register() {
         this.error = false;
         this.success = false;

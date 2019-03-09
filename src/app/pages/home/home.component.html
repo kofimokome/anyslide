@@ -1,6 +1,6 @@
 <div class="transparent-div">
     <div class="container">
-        <app-navbar></app-navbar>
+        <app-navbar (messageEvent)="receiveMessage($event)"></app-navbar>
     </div>
 </div>
 <div class="container">
@@ -91,4 +91,6 @@
         </div>
     </div>
 </div>
-<app-footer></app-footer>
+<div style="margin-top: 50px;">
+    <app-footer></app-footer>
+</div>

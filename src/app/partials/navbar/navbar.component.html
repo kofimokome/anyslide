@@ -23,5 +23,9 @@
             </li>
 
         </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="!isregister" (click)="sendMessage()">Login</button>
+            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="isregister" style="margin-left: 10px;" (click)="sendMessage()">SignUp</button>
+        </form>
     </div>
 </nav>
