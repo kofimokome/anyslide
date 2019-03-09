@@ -74,6 +74,8 @@ export class HomeComponent implements OnInit {
                     }
                 },
                 (error) => {
+                    this.error = true;
+                    this.message = "A server error occurred. Please try again later";
                     console.error('Failed decline request ', error);
                 },
             );
@@ -115,6 +117,8 @@ export class HomeComponent implements OnInit {
                     }
                 },
                 (error) => {
+                    this.error = true;
+                    this.message = "A server error occurred. Please try again later";
                     console.error('Failed decline request ', error);
                 },
             );

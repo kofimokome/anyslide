@@ -75,7 +75,7 @@ if (!$con->query($query)) {
 }
 
 $query = "
-create table slides
+create table if not exists slides
 (
 	id int auto_increment
 		primary key,
