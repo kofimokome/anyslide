@@ -12,7 +12,7 @@ import {environment} from "../../../environments/environment";
 })
 export class DashboardComponent implements OnInit {
 
-    private loading;
+    public loading;
     private socket;
     private presentations: string[];
     private name: string;

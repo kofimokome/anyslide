@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
     private error;
     private success;
     private message: string;
-    private isregister;
+    public isregister;
 
     constructor(private router: Router, private socketService: SocketService, private http: HttpClient) {
         this.socket = socketService.getSocket();

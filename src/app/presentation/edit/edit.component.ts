@@ -14,7 +14,7 @@ import {EditorComponent, EditorModule} from "@tinymce/tinymce-angular";
 })
 export class EditComponent implements OnInit {
     private edit_id;
-    private loading;
+    public loading;
     private slides: any[];
     private editor: any;
     private editor_initialised;

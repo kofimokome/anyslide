@@ -17,9 +17,9 @@ export class PresentationComponent implements OnInit {
     private reveal;
     private fromsocket;
     private presentation_id;
-    private loading;
+    public loading;
     private presentation_content: string;
-    private slides;
+    public slides;
     private presentation_link;
 
     constructor(private socketService: SocketService, private route: ActivatedRoute, private http: HttpClient) {
