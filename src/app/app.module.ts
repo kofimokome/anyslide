@@ -10,6 +10,9 @@ import {PresentationComponent} from "./presentation/view/presentation.component"
 import {DashboardComponent} from "./pages/dashboard/dashboard.component";
 import {HttpClientModule} from "@angular/common/http";
 import {EditorModule} from "@tinymce/tinymce-angular";
+import {ToastrModule} from "ngx-toastr";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+
 
 import {SocketService} from "./services/socket.service";
 import {UserService} from "./services/user.service";
@@ -17,6 +20,7 @@ import {HttpModule} from "@angular/http";
 import {EditComponent} from "./presentation/edit/edit.component";
 import {NavbarComponent} from "./partials/navbar/navbar.component";
 import {FooterComponent} from "./partials/footer/footer.component";
+
 
 
 @NgModule({
@@ -28,7 +32,7 @@ import {FooterComponent} from "./partials/footer/footer.component";
         DashboardComponent,
         EditComponent,
         NavbarComponent,
-        FooterComponent
+        FooterComponent,
     ],
     imports: [
         AppRoutesModule,
@@ -37,6 +41,8 @@ import {FooterComponent} from "./partials/footer/footer.component";
         HttpModule,
         HttpClientModule,
         EditorModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot()
     ],
     providers: [SocketService,UserService],
     bootstrap: [AppComponent]

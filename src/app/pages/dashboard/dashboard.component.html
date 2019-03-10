@@ -9,9 +9,10 @@
 <div *ngIf="!loading">
     Your profile has loaded
 
+    Here are your presentations <br>
     <div *ngFor="let presentation of presentations">
         <div>
-            <a href="">{{presentation}}</a>
+            <a href="" routerLink="/presentation/edit/{{presentation.id}}">{{presentation.title}}</a>
         </div>
     </div>
 

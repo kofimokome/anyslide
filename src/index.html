@@ -7,6 +7,7 @@
     <base href="/">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="node_modules/ngx-toastr/toastr.css">
     <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -26,7 +27,18 @@
 
 </head>
 <body>
-<app-root></app-root>
+<app-root>
+    <div style="margin-top: 15%;" class="text-center align-middle">
+        <img src="assets/images/logo.png" alt="">
+        <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+
+        <br>
+        <h1>
+            Create anywhere, Share anywhere
+        </h1>
+        <h2>Loading ... </h2>
+    </div>
+</app-root>
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="node_modules/reveal.js/lib/js/head.min.js"></script>

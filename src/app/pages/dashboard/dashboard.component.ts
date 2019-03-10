@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
 
     public loading;
     private socket;
-    private presentations: string[];
+    private presentations: any[];
     private name: string;
     private error;
     private message;

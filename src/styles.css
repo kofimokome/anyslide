@@ -16,3 +16,38 @@
 a{
     color: black;
 }
+
+/* Presentation Page */
+.presentation-thumbnail{
+    height: 10em;
+    width: 10em;
+    border: solid 1px black;
+    cursor: pointer;
+    margin-bottom: 1em;
+    background-image: url("assets/images/logo-1.png");
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-weight: bold;
+}
+
+.presentation-thumbnail .presentation-thumnail-image{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+    padding: 40% 30%;
+}
+
+#toast-container > div {
+    opacity:1;
+}
+
+.toast-success {
+    background-color: #51A351 !important;
+}
+
+.toast-error {
+    background-color: #BD362F !important;
+}
