@@ -58,9 +58,11 @@ function register($firstname, $lastname, $username, $password, $email, $connecti
 
 function create_presentation($name, $user, $connection)
 {
-    $query = "insert into presentations values(null,{$name},'{$user}',0,now(),now())";
+    $query = "insert into presentations values(null,'{$name}','{$user}',0,now(),now())";
     if ($connection->query($query)) {
         $presentation_id = $connection->insert_id;
+        $query = "insert into slides values (null, {$presentation_id},'',{$user},0,now(), now())";
+        $connection->query($query);
         return json_encode(array("id" => $presentation_id, "message" => "OK", "success" => true));
     } else {
         return json_encode(array("message" => 'error', 'success' => false));

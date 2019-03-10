@@ -58,26 +58,26 @@ export class PresentationComponent implements OnInit {
             keyboard: this.notguest,
             transition: 'slide', // none/fade/slide/convex/concave/zoom\n" +
             // More info https://github.com/hakimel/reveal.js#dependencies\n" +
-            dependencies: [
+            /*dependencies: [
                 {
-                    src: '../../../node_modules/reveal.js/lib/js/classList.js', condition: function () {
+                    src: 'node_modules/reveal.js/lib/js/classList.js', condition: function () {
                         return !document.body.classList;
                     }
                 },
                 {
-                    src: '../../../node_modules/reveal.js/plugin/markdown/marked.js', condition: function () {
+                    src: 'node_modules/reveal.js/plugin/markdown/marked.js', condition: function () {
                         return !!document.querySelector('[data-markdown]');
                     }
                 },
                 {
-                    src: '../../../node_modules/reveal.js/plugin/markdown/markdown.js', condition: function () {
+                    src: 'node_modules/reveal.js/plugin/markdown/markdown.js', condition: function () {
                         return !!document.querySelector('[data-markdown]');
                     }
                 },
-                {src: '../../../node_modules/reveal.js/plugin/search/search.js', async: true},
-                {src: '../../../node_modules/reveal.js/plugin/zoom-js/zoom.js', async: true},
-                {src: '../../../node_modules/reveal.js/plugin/notes/notes.js', async: true}
-            ]
+                {src: 'node_modules/reveal.js/plugin/search/search.js', async: true},
+                {src: 'node_modules/reveal.js/plugin/zoom-js/zoom.js', async: true},
+                {src: 'node_modules/reveal.js/plugin/notes/notes.js', async: true}
+            ]*/
         });
         if (this.notguest) {
             let self = this;
@@ -93,13 +93,15 @@ export class PresentationComponent implements OnInit {
         let head = <HTMLDivElement> document.head;
         let style = document.createElement('link');
         style.rel = "stylesheet";
-        style.href = "../node_modules/reveal.js/css/reveal.css";
+        style.href = "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/reveal.min.css";
+        //style.href = "../node_modules/reveal.js/css/reveal.css";
         style.id = "theme";
         head.append(style);
 
         style = document.createElement('link');
         style.rel = "stylesheet";
-        style.href = "../node_modules/reveal.js/css/theme/black.css";
+        style.href = "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/theme/black.min.css";
+        //style.href = "../node_modules/reveal.js/css/theme/black.css";
         head.append(style);
         /*let body = <HTMLDivElement> document.body;
         let script = document.createElement('script');

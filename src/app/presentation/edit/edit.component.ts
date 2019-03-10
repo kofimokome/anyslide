@@ -5,7 +5,7 @@ import {environment} from "../../../environments/environment";
 import {UserService} from "../../services/user.service";
 import {SocketService} from "../../services/socket.service";
 import {EditorComponent, EditorModule} from "@tinymce/tinymce-angular";
-import { ToastrService } from 'ngx-toastr';
+import {ToastrService} from 'ngx-toastr';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class EditComponent implements OnInit {
     presentation_created;
     error;
 
-    constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService,private toastr: ToastrService) {
+    constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService, private toastr: ToastrService) {
         this.socket = this.socketService.getSocket();
     }
 
@@ -58,6 +58,7 @@ export class EditComponent implements OnInit {
                         this.slides = response.slides;
                         this.current_content = this.slides[0].content;
                         this.current_index = 0;
+                        this.current_slide = this.slides[0];
                         //console.log(this.slides);
                         this.loading = false;
 
@@ -78,7 +79,8 @@ export class EditComponent implements OnInit {
 
         this.sockets();
     }
-    removeLoader(){
+
+    removeLoader() {
         this.editorInitialised = true;
     }
 
@@ -140,19 +142,19 @@ export class EditComponent implements OnInit {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
-                this.saving = false;
+                    this.saving = false;
                     if (response.success) {
-                        this.toastr.success('Presentation slides have been saved', 'SUCCESS', );
+                        this.toastr.success('Presentation slides have been saved', 'SUCCESS',);
                         console.log(response);
 
                     } else {
-                        this.toastr.error("An error occurred. Please try agian","ERROR");
+                        this.toastr.error("An error occurred. Please try agian", "ERROR");
                         console.log(response);
                     }
 
                 },
                 (error) => {
-                    this.toastr.error("An error occurred. Please try agian","ERROR");
+                    this.toastr.error("An error occurred. Please try agian", "ERROR");
                     console.error('Failed decline request ', error);
                     this.saving = false;
                 },
@@ -171,12 +173,12 @@ export class EditComponent implements OnInit {
         this.socket.on("joinPresentation", (response) => {
             console.log(response);
             if (response.status) {
-                self.message =  response.id;
+                self.message = response.id;
                 this.presentation_created = true;
                 //this.router.navigate(['/presentation/' + response.id]);
             } else {
                 self.message = "not created";
-                this.toastr.error("Presentation could not be created. Please try again","ERROR");
+                this.toastr.error("Presentation could not be created. Please try again", "ERROR");
             }
         })
     }

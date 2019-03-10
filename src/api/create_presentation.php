@@ -13,9 +13,10 @@ $request = json_decode($postdata);
 
 $name = $request->name;
 $user = $request->user_id;
-if ($name == '') {
+
+if (strlen($name) <= 0) {
     echo json_encode(array('message' => 'Enter a presentation title', 'success' => false)); //Session Enter Key
 } else {
-    echo create_presentation($user, $user, $con);
+    echo create_presentation($name, $user, $con);
 }
 //SELECT MAX(id) FROM <tablename>
