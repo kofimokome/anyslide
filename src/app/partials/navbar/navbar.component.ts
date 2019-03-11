@@ -1,5 +1,6 @@
 import {Component, Output, OnInit, EventEmitter, ViewChild} from '@angular/core';
 import {HomeComponent} from "../../pages/home/home.component";
+import {UserService} from "../../services/user.service";
 
 @Component({
     selector: 'app-navbar',
@@ -11,12 +12,14 @@ export class NavbarComponent implements OnInit {
     @Output() messageEvent = new EventEmitter<string>();
     @ViewChild(HomeComponent) child;
     public isregister;
+    public islogin;
 
     constructor() {
     }
 
     ngOnInit() {
         this.isregister = false;
+        this.islogin = UserService.isAuthenticated();
     }
 
     switch_buttons() {
@@ -25,12 +28,16 @@ export class NavbarComponent implements OnInit {
 
     ngAfterViewInit() {
         //this.isregister = this.child.isregister;
-       // console.log(this.child.isregister);
+        // console.log(this.child.isregister);
     }
 
     sendMessage() {
         this.messageEvent.emit();
         this.switch_buttons();
+    }
+
+    logOut(){
+        UserService.logout();
     }
 
 

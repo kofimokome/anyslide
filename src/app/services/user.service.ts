@@ -40,6 +40,7 @@ export class UserService {
     static logout() {
         localStorage.removeItem('id');
         localStorage.removeItem('username');
+        window.location.reload();
     }
 
     static isAuthenticated() {

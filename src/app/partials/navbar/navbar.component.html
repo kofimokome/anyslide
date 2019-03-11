@@ -24,8 +24,9 @@
 
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="!isregister" (click)="sendMessage()">Login</button>
-            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="isregister" (click)="sendMessage()">SignUp</button>
+            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="!isregister && !islogin" (click)="sendMessage()">Login</button>
+            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="isregister && !islogin" (click)="sendMessage()">SignUp</button>
+            <button class="btn btn-outline-primary my-2 my-sm-0" *ngIf="islogin" (click)="logOut()">LogOut</button>
         </form>
     </div>
 </nav>
