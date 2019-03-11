@@ -95,19 +95,51 @@ export class EditComponent implements OnInit {
         })
             .subscribe((response: any) => {
                     if (response.success) {
-                        console.log(response);
                         this.slides.push({id: response.id, content: ""});
-
                     } else {
                         console.log(response);
                     }
-
                 },
                 (error) => {
                     console.error('Failed decline request ', error);
                 },
             );
-        this.slides.push(1);
+    }
+
+    deleteSlide() {
+        if (this.slides.length <= 1) {
+            this.toastr.error("You Must Have At Least One Slide", "ERROR");
+        } else {
+            let data = {
+                slide_id: this.current_slide.id,
+                presentation_id: this.edit_id
+            };
+
+            this.http.post(environment.apiRoot + 'delete_slide.php', data, {
+                headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+            })
+                .subscribe((response: any) => {
+
+                        if (response.success) {
+                            this.slides.splice(this.current_index, 1);
+                            this.current_content = this.slides[0].content;
+                            this.current_index = 0;
+                            this.current_slide = this.slides[0];
+                            this.toastr.success("Slide Has Been Deleted", "SUCCESS");
+
+                        } else {
+                            this.toastr.error(response.message, "ERROR");
+                            console.log(response);
+                        }
+
+                    },
+                    (error) => {
+                        this.toastr.error("An Error Occured. Please Try Again", "ERROR");
+                        console.error('Failed decline request ', error);
+                    },
+                );
+        }
+
     }
 
     setContent(slide: any, index: any) {
@@ -118,6 +150,7 @@ export class EditComponent implements OnInit {
         }
         this.current_index = index;
         this.current_content = this.slides[this.current_index].content;
+        this.current_slide = slide;
 
         //this.editor.setContents(slide.content);
 

@@ -17,7 +17,7 @@ $presentation_id = $request->presentation_id;
 $query = "insert into slides values (null, {$presentation_id},'',{$user_id},0,now(), now())";
 if ($result = $con->query($query)) {
     $presentation_id = $con->insert_id;
-    echo json_encode(array("message" => "OK", "success" => true));
+    echo json_encode(array("message" => "OK", "success" => true,"id"=>$presentation_id));
 } else {
     echo json_encode(array("message" => $con->error, "success" => false));
 }

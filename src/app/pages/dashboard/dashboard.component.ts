@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
     public name: string;
     private error;
     private message;
+    finding_user;
 
     constructor(private router: Router, private socketService: SocketService, private http: HttpClient) {
         this.socket = this.socketService.getSocket();
@@ -27,6 +28,7 @@ export class DashboardComponent implements OnInit {
         this.loading = true;
         this.error = false;
         this.name = '';
+        this.finding_user = true;
         if (!UserService.isAuthenticated()) {
             this.router.navigate(['/']);
         } else {
@@ -43,10 +45,12 @@ export class DashboardComponent implements OnInit {
                             this.loading = false;
 
                         } else {
+                            this.finding_user = false;
                             console.log(response);
                         }
                     },
                     (error) => {
+                        this.finding_user = false;
                         console.error('Failed decline request ', error);
                     },
                 );

@@ -1,13 +1,25 @@
-<p>
-    dashboard works!
-</p>
 
 <div *ngIf="loading">
-    Your profile is loading
+    <div style="margin-top: 15%;" class="text-center align-middle">
+        <img src="assets/images/logo.png" alt="">
+        <i *ngIf="finding_user" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+
+        <br>
+        <h2 *ngIf="finding_user">
+            Your Dashboard is Loading
+        </h2>
+        <div *ngIf="!finding_user" class="alert alert-danger text-center">
+            An Error Has Occurred. Please Refresh This Page
+        </div>
+    </div>
 </div>
 
 <div *ngIf="!loading">
+    <div class="container">
+        <app-navbar></app-navbar>
+    </div>
     Your profile has loaded
+
 
     Here are your presentations <br>
     <div *ngFor="let presentation of presentations">
@@ -21,4 +33,7 @@
         <button (click)="newPresentation()">Create a new presentation</button>
     </div>
     <div *ngIf="error" class="alert alert-danger"> Please Enter a presentation name</div>
+    <div style="margin-top: 50px;">
+        <app-footer></app-footer>
+    </div>
 </div>

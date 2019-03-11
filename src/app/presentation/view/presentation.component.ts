@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as Reveal from "../../../../node_modules/reveal.js"
 import {SocketService} from "../../services/socket.service";
-import {ActivatedRoute, ParamMap} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {environment} from "../../../environments/environment";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
@@ -22,7 +22,7 @@ export class PresentationComponent implements OnInit {
     public slides;
     private presentation_link;
 
-    constructor(private socketService: SocketService, private route: ActivatedRoute, private http: HttpClient) {
+    constructor(private socketService: SocketService, private route: ActivatedRoute, private http: HttpClient, private router: Router) {
         this.socket = socketService.getSocket();
         this.reveal = Reveal;
     }
@@ -83,7 +83,11 @@ export class PresentationComponent implements OnInit {
             let self = this;
             this.reveal.addEventListener('slidechanged', function (event) {
                 // event.previousSlide, event.currentSlide, event.indexh, event.indexv
-                self.socket.emit("update_presentation",self.presentation_link, event.indexh, event.indexv, event.indexf);
+                if (!self.fromsocket) {
+                    self.socket.emit("update_presentation", self.presentation_link, event.indexh, event.indexv, event.indexf);
+                } else {
+                    self.fromsocket = !self.fromsocket;
+                }
             });
         }
 
@@ -187,14 +191,19 @@ export class PresentationComponent implements OnInit {
                 this.getSlides();
 
             } else {
-                // do something
+                this.router.navigate(['/404']);
             }
         });
 
         this.socket.on("update_slide", (e) => {
-            console.log("something");
             this.reveal.slide(e.indexh, e.indexv, e.indexf);
+            this.fromsocket = true;
         });
+
+        this.socket.on("leavePresentation", (e) => {
+            //this.router.navigate(['/404']);
+            window.location.assign('/404');
+        })
         // all sockets go here
     }
 }
