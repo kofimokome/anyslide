@@ -27,6 +27,8 @@ export class EditComponent implements OnInit {
     saving;
     presentation_created;
     error;
+    slide_deleting;
+    presentation_deleting
 
     constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService, private toastr: ToastrService) {
         this.socket = this.socketService.getSocket();
@@ -35,6 +37,8 @@ export class EditComponent implements OnInit {
     ngOnInit() {
         this.current_slide = null;
         this.current_content = null;
+        this.slide_deleting = false;
+        this.presentation_deleting = false;
         this.loading = true;
         this.saving = false;
         this.presentation_created = false;
@@ -110,6 +114,7 @@ export class EditComponent implements OnInit {
         if (this.slides.length <= 1) {
             this.toastr.error("You Must Have At Least One Slide", "ERROR");
         } else {
+            this.slide_deleting = true;
             let data = {
                 slide_id: this.current_slide.id,
                 presentation_id: this.edit_id
@@ -119,7 +124,7 @@ export class EditComponent implements OnInit {
                 headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
             })
                 .subscribe((response: any) => {
-
+                        this.slide_deleting = false;
                         if (response.success) {
                             this.slides.splice(this.current_index, 1);
                             this.current_content = this.slides[0].content;

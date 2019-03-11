@@ -42,9 +42,14 @@
                     Share
                 </button>
 
-                <button class="btn btn-outline-danger" data-toggle="modal" data-target="#deletepresentationmodal">
+                <button *ngIf="!presentation_deleting" class="btn btn-outline-danger" data-toggle="modal" data-target="#deletepresentationmodal">
                     <i class="fa fa-trash"></i>
                     Delete
+                </button>
+
+                <button *ngIf="presentation_deleting" class="btn btn-outline-danger disabled">
+                    <i class="fa fa-spin fa-spinner"></i>
+                    Deleting
                 </button>
 
                 <!-- Modal -->
@@ -127,9 +132,14 @@
                 <div class="card">
                     <h5 class="card-header">Slide Options</h5>
                     <div class="card-body">
-                        <button class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteslidemodal">
+                        <button *ngIf="!slide_deleting" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteslidemodal">
                             <i class="fa fa-trash"></i>
                             Delete Slide
+                        </button>
+
+                        <button *ngIf="slide_deleting" class="btn btn-outline-danger disabled">
+                            <i class="fa fa-spin fa-spinner"></i>
+                            Deleting
                         </button>
 
                         <!-- Modal -->
