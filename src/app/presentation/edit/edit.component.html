@@ -108,9 +108,13 @@
                     <!--<textarea style="display: block;" [(ngModel)]="slides[i].content">{{slide.content}}</textarea>-->
                 </div>
                 <div>
-                    <button (click)="newSlide()" class="btn btn-block btn-primary">
+                    <button  *ngIf="!slide_creating" (click)="newSlide()" class="btn btn-block btn-primary">
                         <i class="fa fa-plus-circle"></i>
                         new slide
+                    </button>
+                    <button  *ngIf="slide_creating" class="btn btn-outline-primary btn-block disabled">
+                        <i class="fa fa-spin fa-spinner"></i>
+                        Creating
                     </button>
                 </div>
             </div>

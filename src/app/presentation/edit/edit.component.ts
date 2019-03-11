@@ -28,7 +28,8 @@ export class EditComponent implements OnInit {
     presentation_created;
     error;
     slide_deleting;
-    presentation_deleting
+    presentation_deleting;
+    slide_creating
 
     constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService, private toastr: ToastrService) {
         this.socket = this.socketService.getSocket();
@@ -39,6 +40,7 @@ export class EditComponent implements OnInit {
         this.current_content = null;
         this.slide_deleting = false;
         this.presentation_deleting = false;
+        this.slide_creating = false;
         this.loading = true;
         this.saving = false;
         this.presentation_created = false;
@@ -89,6 +91,7 @@ export class EditComponent implements OnInit {
     }
 
     newSlide() {
+        this.slide_creating = true;
         let data = {
             user_id: UserService.getUserId(),
             presentation_id: this.edit_id,
@@ -98,13 +101,18 @@ export class EditComponent implements OnInit {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
+                    this.slide_creating = false;
                     if (response.success) {
                         this.slides.push({id: response.id, content: ""});
+                        this.toastr.success("Slide Has Been Created", "SUCCESS");
                     } else {
+                        this.toastr.error("An Error Occurred Please Try Again", "ERROR");
                         console.log(response);
                     }
                 },
                 (error) => {
+                    this.slide_creating = false;
+                    this.toastr.error("An Error Occurred Please Try Again", "ERROR");
                     console.error('Failed decline request ', error);
                 },
             );
@@ -139,6 +147,7 @@ export class EditComponent implements OnInit {
 
                     },
                     (error) => {
+                        this.slide_deleting = false;
                         this.toastr.error("An Error Occured. Please Try Again", "ERROR");
                         console.error('Failed decline request ', error);
                     },
