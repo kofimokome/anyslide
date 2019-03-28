@@ -18,8 +18,24 @@ if ($type == "edit") {
         }
     } else {
         echo json_encode(array("message" => $con->error, "success" => false, "code" => 0));
+        die();
     }
 }
+
+if ($type == "colab") {
+    $query = "select user_id from collaborators where presentation_id = {$presentation_id} and user_id = {$user_id}";
+    if ($result = $con->query($query)) {
+        $result = $result->fetch_assoc();
+        if (!isset($result['user_id'])) {
+            echo json_encode(array("message" => "You are not allowed to edit this slide", "success" => false, "code" => 404));
+            die();
+        }
+    } else {
+        echo json_encode(array("message" => $con->error, "success" => false, "code" => 0));
+        die();
+    }
+}
+
 
 $query = "select id,content from slides where presentation_id = {$presentation_id} and deleted = 0";
 if ($result = $con->query($query)) {

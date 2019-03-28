@@ -12,6 +12,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {EditorModule} from "@tinymce/tinymce-angular";
 import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { LSelect2Module } from 'ngx-select2';
 
 
 import {SocketService} from "./services/socket.service";
@@ -42,6 +43,7 @@ import {FooterComponent} from "./partials/footer/footer.component";
         HttpClientModule,
         EditorModule,
         BrowserAnimationsModule,
+        LSelect2Module,
         ToastrModule.forRoot()
     ],
     providers: [SocketService,UserService],

@@ -32,17 +32,80 @@
                     <i class="fa fa-spinner fa-pulse"></i>
                 </button>
                 <button (click)="startPresentation(true, '')" class="btn btn-outline-primary"
-                        style="margin-right: 20px">
+                        style="margin-right: 20px" *ngIf="!iscollaborator">
                     <i class="fa fa-desktop"></i>
                     Start Presentation
                 </button>
 
-                <button class="btn btn-outline-primary" style="margin-right: 20px">
+                <button class="btn btn-outline-primary" style="margin-right: 20px" data-toggle="modal"
+                        data-target="#sharepresentationmodal" *ngIf="!iscollaborator">
                     <i class="fa fa-share"></i>
                     Share
                 </button>
 
-                <button *ngIf="!presentation_deleting" class="btn btn-outline-danger" data-toggle="modal" data-target="#deletepresentationmodal">
+                <!-- Modal -->
+                <div class="modal fade" id="sharepresentationmodal" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog" role="document" *ngIf="!iscollaborator">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="sharepresentationModalLabel1">Share Presentation</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-6">Select the user name:
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <l-select2 [(ngModel)]="selectedUser" [disabled]="false"
+                                                               [options]="getUsersOptions"
+                                                               (valueChange)="valueChange($event)"></l-select2>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top:10px;">
+                                                <div class="col-12">
+                                                    <button class="btn btn-info btn-block" (click)="addCollaborator()" *ngIf="selectedUser">+ Add</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5>Colllaborators: </h5>
+                                            <table class="table">
+                                                <tr>
+                                                    <th>username</th>
+                                                    <th>action</th>
+                                                </tr>
+                                                <tbody *ngFor="let collaborator of collaborators; let i = index">
+                                                <tr>
+                                                    <th>{{collaborator.username}}</th>
+                                                    <th> <button class="btn btn-danger" (click)="removeCollaborator(collaborator.user_id, i)">delete</button></th>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button *ngIf="!presentation_deleting && !iscollaborator" class="btn btn-outline-danger" data-toggle="modal"
+                        data-target="#deletepresentationmodal">
                     <i class="fa fa-trash"></i>
                     Delete
                 </button>
@@ -54,8 +117,8 @@
 
                 <!-- Modal -->
                 <div class="modal fade" id="deletepresentationmodal" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
+                     aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog" role="document" *ngIf="!iscollaborator">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel1">Warning !</h5>
@@ -67,7 +130,8 @@
                                 Are You Sure You Want To Delete This Presentation?
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-outline-danger" data-dismiss="modal">
+                                <button class="btn btn-outline-danger" data-dismiss="modal"
+                                        (click)="deletePresentation()">
                                     <i class="fa fa-trash"></i>
                                     Yes Delete
                                 </button>
@@ -108,11 +172,11 @@
                     <!--<textarea style="display: block;" [(ngModel)]="slides[i].content">{{slide.content}}</textarea>-->
                 </div>
                 <div>
-                    <button  *ngIf="!slide_creating" (click)="newSlide()" class="btn btn-block btn-primary">
+                    <button *ngIf="!slide_creating" (click)="newSlide()" class="btn btn-block btn-primary">
                         <i class="fa fa-plus-circle"></i>
                         new slide
                     </button>
-                    <button  *ngIf="slide_creating" class="btn btn-outline-primary btn-block disabled">
+                    <button *ngIf="slide_creating" class="btn btn-outline-primary btn-block disabled">
                         <i class="fa fa-spin fa-spinner"></i>
                         Creating
                     </button>
@@ -136,7 +200,8 @@
                 <div class="card">
                     <h5 class="card-header">Slide Options</h5>
                     <div class="card-body">
-                        <button *ngIf="!slide_deleting" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteslidemodal">
+                        <button *ngIf="!slide_deleting" class="btn btn-outline-danger" data-toggle="modal"
+                                data-target="#deleteslidemodal">
                             <i class="fa fa-trash"></i>
                             Delete Slide
                         </button>

@@ -18,8 +18,6 @@
     <div class="container">
         <app-navbar></app-navbar>
     </div>
-    Your profile has loaded
-
 
     Here are your presentations <br>
     <div *ngFor="let presentation of presentations">
@@ -33,6 +31,14 @@
         <button (click)="newPresentation()">Create a new presentation</button>
     </div>
     <div *ngIf="error" class="alert alert-danger"> Please Enter a presentation name</div>
+    <div>
+        <h3>Here are your  collaborations</h3>
+        <div *ngFor="let collaboration of collaborations">
+            <div>
+                <a href="" routerLink="/collaboration/{{collaboration.id}}">{{collaboration.title}}</a>
+            </div>
+        </div>
+    </div>
     <div style="margin-top: 50px;">
         <app-footer></app-footer>
     </div>

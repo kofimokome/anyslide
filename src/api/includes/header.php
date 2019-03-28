@@ -96,26 +96,10 @@ if (!$con->query($query)) {
 }
 
 $query = "
-create table if not exists collaborations
-(
-	id int auto_increment primary key,
-	presentation_id int not null,
-	deleted int default '0' not null,
-	constraint id_UNIQUE
-		unique (id)
-)";
-if (!$con->query($query)) {
-    $error = array("message" => "an error occurred when creating tables", "success" => false);
-    echo json_encode($error);
-    //echo $con->error;
-    die();
-}
-
-$query = "
 create table if not exists collaborators
 (
 	id int auto_increment primary key,
-	collaboration_id int not null,
+	presentation_id int not null,
 	user_id int not null,
 	constraint id_UNIQUE
 		unique (id)

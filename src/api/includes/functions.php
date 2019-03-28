@@ -69,20 +69,20 @@ function create_presentation($name, $user, $connection)
     }
 }
 
-function join_session($name, $password, $connection)
+function get_user($user_id, $connection)
 {
-    if ($result = $connection->query("SELECT * FROM sessions WHERE name='{$name}'")) {
+    $query = "select id, username from users where id = {$user_id}";
+    if ($result = $connection->query($query)) {
         $result = $result->fetch_object();
-        if (is_null($result)) {
-            return json_encode(array("message" => "SNF"));
-        } elseif ($password == $result->pass) {
-            unset($result->pass);
-            $result->message = "OK";
-            return json_encode($result);
-        } else {
-            return json_encode(array("message" => "SKI"));
-        }
-    } else {
-        return json_encode(array("message" => "error"));
+        return array('user_id' => $result->id, 'username' => $result->username);
+    }
+}
+
+function get_presentation($presentation_id, $connection)
+{
+    $query = "select id,title from presentations where id = {$presentation_id} and deleted = 0";
+    if ($result = $connection->query($query)) {
+        $result = $result->fetch_object();
+        return $result;
     }
 }

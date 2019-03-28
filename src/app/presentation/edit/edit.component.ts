@@ -23,13 +23,18 @@ export class EditComponent implements OnInit {
     private current_index;
     private socket;
     private message;
+    collaborators: any[];
     editorInitialised;
     saving;
     presentation_created;
     error;
     slide_deleting;
     presentation_deleting;
-    slide_creating
+    slide_creating;
+    iscollaborator;
+
+    getUsersOptions: any;
+    selectedUser: any;
 
     constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService, private toastr: ToastrService) {
         this.socket = this.socketService.getSocket();
@@ -48,19 +53,190 @@ export class EditComponent implements OnInit {
         this.error = false;
         this.route.params.subscribe((params: ParamMap) => {
             this.edit_id = params['id'];
-            console.log(this.edit_id);
+            //console.log(this.edit_id);
         });
+        this.route.data
+            .subscribe((data) => {
+                console.log(data);
+                this.iscollaborator = data.collaborator;
+            });
+        this.getSlides();
+
+        if (!this.iscollaborator) {
+            this.initialiseSelect2();
+            this.getCollaborators();
+        }
+
+        this.sockets();
+
+
+    }
+
+    valueChange(event) {
+        //console.log(event);
+        this.selectedUser = event;
+        //console.log(this.selectedUser);
+    }
+
+    removeLoader() {
+        this.editorInitialised = true;
+    }
+
+    initialiseSelect2() {
+        this.getUsersOptions = {
+            multiple: false,
+            minimumInputLength: 1,
+            ajax: {
+                url: environment.apiRoot + 'get_users.php',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        username: params.term,
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data.users,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+        };
+    }
+
+    getCollaborators() {
         let data = {
             user_id: UserService.getUserId(),
             presentation_id: this.edit_id,
-            type: 'edit',
+        };
+        this.http.post(environment.apiRoot + 'get_collaborators.php', data, {
+            headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+        })
+            .subscribe((response: any) => {
+                    if (response.success) {
+                        //console.log(response);
+                        this.collaborators = response.collaborators;
+
+
+                    } else {
+                        if (response.code == 404) {
+                            this.router.navigate(['/404']);
+                        } else {
+                            //console.log(response);
+                            this.toastr.error("An Error Occurred While Loading Your Collaborators", "ERROR");
+                        }
+                    }
+                },
+                (error) => {
+                    this.toastr.error("An Error Occurred While Loading Your Collaborators", "ERROR");
+                    //console.error('Failed decline request ', error);
+                },
+            );
+    }
+
+    addCollaborator() {
+        //console.log(this.selectedUser.text);
+        //text: "zinger", id: "9
+
+        if (this.selectedUser.id == UserService.getUserId()) {
+            this.toastr.error("You are already a collaborator", "ERROR");
+        } else {
+            let data = {
+                user_id: UserService.getUserId(),
+                presentation_id: this.edit_id,
+                collaborator_id: this.selectedUser.id,
+            };
+            this.http.post(environment.apiRoot + 'add_collaborator.php', data, {
+                headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+            })
+                .subscribe((response: any) => {
+                        if (response.success) {
+                            //console.log(response);
+                            let collaborator = {
+                                user_id: this.selectedUser.id,
+                                username: this.selectedUser.text,
+                            };
+                            this.collaborators.push(collaborator);
+                            this.toastr.success("Collaborator has been added", "SUCCESS");
+
+
+                        } else {
+                            if (response.code == 404) {
+                                this.router.navigate(['/404']);
+                            } else {
+                                this.toastr.error(response.message, "ERROR");
+                                //console.log(response);
+                            }
+                        }
+                    },
+                    (error) => {
+                        //console.error('Failed decline request ', error);
+                        this.toastr.error("An Error Occurred Please Try Again", "ERROR");
+                    },
+                );
+        }
+    }
+
+    removeCollaborator(id, index) {
+        let data = {
+            user_id: UserService.getUserId(),
+            presentation_id: this.edit_id,
+            collaborator_id: id,
+        };
+        this.http.post(environment.apiRoot + 'remove_collaborator.php', data, {
+            headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+        })
+            .subscribe((response: any) => {
+                    if (response.success) {
+                        //console.log(response);
+                        this.collaborators.splice(index, 1);
+                        this.toastr.success("Collaborator has been removed", "SUCCESS");
+
+
+                    } else {
+                        if (response.code == 404) {
+                            this.router.navigate(['/404']);
+                        } else {
+                            this.toastr.error(response.message, "ERROR");
+                            //console.log(response);
+                        }
+                    }
+                },
+                (error) => {
+                    //console.error('Failed decline request ', error);
+                    this.toastr.error("An Error Occurred Please Try Again Later", "ERROR");
+                },
+            );
+    }
+
+    getSlides() {
+        let type = '';
+        if (this.iscollaborator) {
+            type = 'collab';
+        } else {
+            type = 'edit';
+        }
+        let data = {
+            user_id: UserService.getUserId(),
+            presentation_id: this.edit_id,
+            type: type,
         };
         this.http.post(environment.apiRoot + 'get_slides.php', data, {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
                     if (response.success) {
-                        console.log(response);
+                        //console.log(response);
                         this.slides = response.slides;
                         this.current_content = this.slides[0].content;
                         this.current_index = 0;
@@ -73,21 +249,15 @@ export class EditComponent implements OnInit {
                             this.router.navigate(['/404']);
                         } else {
                             this.error = true;
-                            console.log(response);
+                            //console.log(response);
                         }
                     }
                 },
                 (error) => {
-                    console.error('Failed decline request ', error);
+                    //console.error('Failed decline request ', error);
                     this.error = true;
                 },
             );
-
-        this.sockets();
-    }
-
-    removeLoader() {
-        this.editorInitialised = true;
     }
 
     newSlide() {
@@ -107,13 +277,13 @@ export class EditComponent implements OnInit {
                         this.toastr.success("Slide Has Been Created", "SUCCESS");
                     } else {
                         this.toastr.error("An Error Occurred Please Try Again", "ERROR");
-                        console.log(response);
+                        //console.log(response);
                     }
                 },
                 (error) => {
                     this.slide_creating = false;
                     this.toastr.error("An Error Occurred Please Try Again", "ERROR");
-                    console.error('Failed decline request ', error);
+                    //console.error('Failed decline request ', error);
                 },
             );
     }
@@ -142,17 +312,46 @@ export class EditComponent implements OnInit {
 
                         } else {
                             this.toastr.error(response.message, "ERROR");
-                            console.log(response);
+                            //console.log(response);
                         }
 
                     },
                     (error) => {
                         this.slide_deleting = false;
                         this.toastr.error("An Error Occured. Please Try Again", "ERROR");
-                        console.error('Failed decline request ', error);
+                        //console.error('Failed decline request ', error);
                     },
                 );
         }
+
+    }
+
+    deletePresentation() {
+        this.presentation_deleting = true;
+        let data = {
+            presentation_id: this.edit_id,
+            user_id: UserService.getUserId(),
+        };
+
+        this.http.post(environment.apiRoot + 'delete_presentation.php', data, {
+            headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
+        })
+            .subscribe((response: any) => {
+                    this.presentation_deleting = false;
+                    if (response.success) {
+                        this.router.navigate(['/dashboard']);
+                    } else {
+                        this.toastr.error(response.message, "ERROR");
+                        //console.log(response);
+                    }
+
+                },
+                (error) => {
+                    this.presentation_deleting = false;
+                    this.toastr.error("An Error Occured. Please Try Again", "ERROR");
+                    //console.error('Failed decline request ', error);
+                },
+            );
 
     }
 

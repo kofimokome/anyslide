@@ -21,6 +21,7 @@ if ($result = $con->query($query)) {
     if ($count <= 1) {
         echo json_encode(array("success" => false, "message" => "You must have atleast one slide"));
     } else {
+        // todo: set the delete flag to one instead
         $query = "DELETE FROM slides WHERE id = {$slide_id}";
         if ($result = $con->query($query)) {
             echo json_encode(array("message" => "OK", "success" => true));
