@@ -47,6 +47,7 @@ function Presentation(presentation_id, owner_id, device_id, password) {
 function Collaborator(collaboration_id, user_id) {
     this.collaboration_id = collaboration_id;
     this.user_id = user_id;  // user object
+    this.slide_id = 0;
 }
 
 function Collaboration(collaboration_id, owner_id) {
@@ -188,7 +189,7 @@ io.on('connection', function (socket) {
             logData(user_id + " has been registered ");
 
             logData("A new device: " + socket.id + " assigned to " + username);
-            console.log(users);
+            //console.log(users);
         }
     });
 
@@ -253,9 +254,76 @@ io.on('connection', function (socket) {
             let next = {indexh: indexh, indexv: indexv, indexf: indexf};
             logData("received " + indexh + " " + indexv + " " + indexf);
             socket.broadcast.to("presentation" + presentation_id).emit('update_slide', next);
-        }else{
+        } else {
             logData("refues");
         }
+    });
+
+    socket.on('join_collaboration', function (collaboration_id, user_id) {
+        let collaborator = new Collaborator(collaboration_id, user_id);
+        collaborators.push(collaborator);
+        socket.join("collaboration" + collaboration_id);
+
+        logData("Device: " + users[findDeviceUser(socket.id)].username + " joined collaboration " + collaboration_id);
+
+    });
+
+    socket.on('leave_collaboration', function (collaboration_id, user_id) {
+        for (let i = 0; i < collaborators.length; i++) {
+            if (collaboration_id == collaborators[i].collaboration_id && user_id == collaborators[i].user_id) {
+                collaborators.splice(i, 1);
+            }
+        }
+        socket.broadcast.to("collaboration" + collaboration_id).emit('leaveCollaboration', user_id);
+    });
+
+    socket.on('is_slide_free', function (collaboration_id, user_id, slide_id) {
+        let is_slide_free = false;
+        for (let i = 0; i < collaborators.length; i++) {
+            if (collaboration_id == collaborators[i].collaboration_id && slide_id == collaborators[i].slide_id) {
+                // return occupied
+                is_slide_free = true;
+                let data = {
+                    collaboration_id: collaboration_id,
+                    status: true,
+                };
+                io.to(socket.id).emit('isSlideFree', data);
+            }
+        }
+
+        if (!is_slide_free) {
+            for (let i = 0; i < collaborators.length; i++) {
+                if (collaboration_id == collaborators[i].collaboration_id && user_id == collaborators[i].user_id) {
+                    // return occupied
+                    collaborators[i].slide_id = slide_id;
+                    let data = {
+                        collaboration_id: collaboration_id,
+                        status: false,
+                    };
+                    io.to(socket.id).emit('isSlideFree', data);
+                }
+            }
+        }
+    });
+
+    socket.on('update_slide_content', function (collaboration_id, slide_id, slide_content) {
+        let data = {
+            id: slide_id,
+            content: slide_content,
+        };
+        socket.broadcast.to("collaboration" + collaboration_id).emit('updateSlideContent', data);
+    });
+
+    socket.on('delete_slide', function (collaboration_id, slide_id) {
+        socket.broadcast.to("collaboration" + collaboration_id).emit('deleteSlide', slide_id);
+    });
+
+    socket.on('create_slide', function (collaboration_id, slide_id, creator_id) {
+        let data = {
+            creator_id: creator_id,
+            slide_id: slide_id,
+        };
+        socket.broadcast.to("collaboration" + collaboration_id).emit('createSlide', data);
     });
 
     socket.on('disconnect', function () {
@@ -274,6 +342,12 @@ io.on('connection', function (socket) {
                 if (users[user_index].devices[i].device_id == socket.id) {
                     users[user_index].devices.splice(i, 1);
                     logData("device " + socket.id + " has been removed from " + users[user_index].username);
+                }
+            }
+
+            for (let i = 0; i < collaborators.length; i++) {
+                if (users[user_index].user_id == collaborators[i].user_id) {
+                    collaborators.splice(i, 1);
                 }
             }
         } else {

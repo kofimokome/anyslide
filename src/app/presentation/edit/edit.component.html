@@ -164,7 +164,7 @@
         <div class="row">
             <div class="col-2" style="min-height: 25em; max-height: 40em; overflow-y: scroll; overflow-x: hidden">
                 <div *ngFor="let slide of slides; let i = index">
-                    <div (click)="setContent(slide, i)" class="presentation-thumbnail">
+                    <div (click)="isSlideFree(slide, i)" class="presentation-thumbnail">
                         <div class="presentation-thumnail-image">
                             Slide {{ i + 1}}
                         </div>

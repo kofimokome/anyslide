@@ -35,6 +35,8 @@ export class EditComponent implements OnInit {
 
     getUsersOptions: any;
     selectedUser: any;
+    temp_slide: any;
+    temp_index: any;
 
     constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private socketService: SocketService, private toastr: ToastrService) {
         this.socket = this.socketService.getSocket();
@@ -57,7 +59,7 @@ export class EditComponent implements OnInit {
         });
         this.route.data
             .subscribe((data) => {
-                console.log(data);
+                //console.log(data);
                 this.iscollaborator = data.collaborator;
             });
         this.getSlides();
@@ -67,6 +69,7 @@ export class EditComponent implements OnInit {
             this.getCollaborators();
         }
 
+        this.socket.emit("join_collaboration", this.edit_id, UserService.getUserId());
         this.sockets();
 
 
@@ -202,6 +205,8 @@ export class EditComponent implements OnInit {
                         this.collaborators.splice(index, 1);
                         this.toastr.success("Collaborator has been removed", "SUCCESS");
 
+                        this.socket.emit("leave_collaboration", this.edit_id, id);
+
 
                     } else {
                         if (response.code == 404) {
@@ -238,9 +243,14 @@ export class EditComponent implements OnInit {
                     if (response.success) {
                         //console.log(response);
                         this.slides = response.slides;
-                        this.current_content = this.slides[0].content;
-                        this.current_index = 0;
-                        this.current_slide = this.slides[0];
+                        //this.current_content = this.slides[0].content;
+                        //this.current_index = 0;
+                        //this.current_slide = this.slides[0];
+                        let initial_slide = {
+                            id: this.slides[0].id,
+                            content: this.slides[0].content,
+                        };
+                        this.isSlideFree(initial_slide, 0);
                         //console.log(this.slides);
                         this.loading = false;
 
@@ -275,6 +285,7 @@ export class EditComponent implements OnInit {
                     if (response.success) {
                         this.slides.push({id: response.id, content: ""});
                         this.toastr.success("Slide Has Been Created", "SUCCESS");
+                        this.socket.emit("create_slide", this.edit_id, response.id, UserService.getUserId());
                     } else {
                         this.toastr.error("An Error Occurred Please Try Again", "ERROR");
                         //console.log(response);
@@ -305,10 +316,17 @@ export class EditComponent implements OnInit {
                         this.slide_deleting = false;
                         if (response.success) {
                             this.slides.splice(this.current_index, 1);
-                            this.current_content = this.slides[0].content;
-                            this.current_index = 0;
-                            this.current_slide = this.slides[0];
+                            this.socket.emit("delete_slide", this.edit_id, this.current_slide.id);
+                            this.current_content = '';
+                            this.current_index = null;
+                            this.current_slide = null;
                             this.toastr.success("Slide Has Been Deleted", "SUCCESS");
+
+                            let initial_slide = {
+                                id: this.slides[0].id,
+                                content: this.slides[0].content,
+                            };
+                            this.isSlideFree(initial_slide, 0);
 
                         } else {
                             this.toastr.error(response.message, "ERROR");
@@ -339,6 +357,7 @@ export class EditComponent implements OnInit {
             .subscribe((response: any) => {
                     this.presentation_deleting = false;
                     if (response.success) {
+                        this.socket.emit("leave_collaboration", this.edit_id, 0);
                         this.router.navigate(['/dashboard']);
                     } else {
                         this.toastr.error(response.message, "ERROR");
@@ -352,6 +371,16 @@ export class EditComponent implements OnInit {
                     //console.error('Failed decline request ', error);
                 },
             );
+
+    }
+
+    isSlideFree(slide: any, index: any) {
+        if (index != this.current_index) {
+            this.temp_slide = slide;
+            this.temp_index = index;
+
+            this.socket.emit('is_slide_free', this.edit_id, UserService.getUserId(), slide.id);
+        }
 
     }
 
@@ -391,17 +420,19 @@ export class EditComponent implements OnInit {
                     this.saving = false;
                     if (response.success) {
                         this.toastr.success('Presentation slides have been saved', 'SUCCESS',);
-                        console.log(response);
+                        this.socket.emit('update_slide_content', this.edit_id, this.slides[this.current_index].id, this.slides[this.current_index].content);
+
+                        //console.log(response);
 
                     } else {
                         this.toastr.error("An error occurred. Please try agian", "ERROR");
-                        console.log(response);
+                        //console.log(response);
                     }
 
                 },
                 (error) => {
                     this.toastr.error("An error occurred. Please try agian", "ERROR");
-                    console.error('Failed decline request ', error);
+                    //console.error('Failed decline request ', error);
                     this.saving = false;
                 },
             );
@@ -416,17 +447,83 @@ export class EditComponent implements OnInit {
 
     sockets() {
         let self = this;
-        this.socket.on("joinPresentation", (response) => {
-            console.log(response);
-            if (response.status) {
-                self.message = response.id;
-                this.presentation_created = true;
-                //this.router.navigate(['/presentation/' + response.id]);
-            } else {
-                self.message = "not created";
-                this.toastr.error("Presentation could not be created. Please try again", "ERROR");
+        if (!this.iscollaborator) {
+            this.socket.on("joinPresentation", (response) => {
+                //console.log(response);
+                if (response.status) {
+                    self.message = response.id;
+                    this.presentation_created = true;
+                    //this.router.navigate(['/presentation/' + response.id]);
+                } else {
+                    self.message = "not created";
+                    this.toastr.error("Presentation could not be created. Please try again", "ERROR");
+                }
+            });
+        }
+
+        this.socket.on("isSlideFree", (response) => {
+            //console.log(response);
+            if (response.collaboration_id == this.edit_id) {
+                if (response.status) {
+                    this.toastr.info("One of your collaborators is editing this slide", "INFO");
+                } else {
+                    if (this.current_slide != null) {
+                        if (this.current_content != this.slides[this.current_index].content) {
+                            this.socket.emit('update_slide_content', this.edit_id, this.slides[this.current_index].id, this.current_content);
+                        }
+                    }
+                    this.setContent(this.temp_slide, this.temp_index);
+                }
             }
-        })
+        });
+
+        this.socket.on("updateSlideContent", (response) => {
+            //console.log(response);
+            let slide_id = response.id;
+            let content = response.content;
+
+            for (let i = 0; i < this.slides.length; i++) {
+                if (this.slides[i].id == slide_id) {
+                    this.slides[i].content = content;
+                    break;
+                }
+            }
+        });
+
+        this.socket.on("deleteSlide", (response) => {
+            for (let i = 0; i < this.slides.length; i++) {
+                if (this.slides[i].id == response) {
+                    this.slides.splice(i, 1);
+                    this.current_index = null;
+                    this.current_slide = null;
+                    //this.toastr.success("Slide Has Been Deleted", "SUCCESS");
+
+                    let initial_slide = {
+                        id: this.slides[0].id,
+                        content: this.slides[0].content,
+                    };
+                    break;
+                }
+            }
+        });
+
+        this.socket.on("createSlide", (response) => {
+            if (response.creator_id != UserService.getUserId()) {
+                let slide = {
+                    id: response.slide_id,
+                    content: '',
+                };
+                this.slides.push(slide);
+            }
+        });
+
+        this.socket.on("leaveCollaboration", (response) => {
+            if (response == UserService.getUserId() || response == 0) {
+                if (this.iscollaborator) {
+                    this.router.navigate(['/404']);
+                }
+            }
+        });
     }
 
 }

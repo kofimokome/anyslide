@@ -22,9 +22,14 @@ if ($result = $con->query($query)) {
         //todo: set the delete flag to one
         $query = "DELETE FROM slides WHERE presentation_id = {$presentation_id}";
         if ($result = $con->query($query)) {
-            $query = "DELETE FROM presentations WHERE id = {$presentation_id}";
+            $query = "DELETE FROM collaborators WHERE presentation_id = {$presentation_id}";
             if ($result = $con->query($query)) {
-                echo json_encode(array("message" => "OK", "success" => true));
+                $query = "DELETE FROM presentations WHERE id = {$presentation_id}";
+                if ($result = $con->query($query)) {
+                    echo json_encode(array("message" => "OK", "success" => true));
+                } else {
+                    echo json_encode(array("message" => "An Error Occured. Please Try Again", "success" => false));
+                }
             } else {
                 echo json_encode(array("message" => "An Error Occured. Please Try Again", "success" => false));
             }
