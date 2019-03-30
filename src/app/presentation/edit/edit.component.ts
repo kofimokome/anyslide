@@ -227,7 +227,7 @@ export class EditComponent implements OnInit {
     getSlides() {
         let type = '';
         if (this.iscollaborator) {
-            type = 'collab';
+            type = 'colab';
         } else {
             type = 'edit';
         }
