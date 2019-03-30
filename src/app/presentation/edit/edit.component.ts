@@ -464,21 +464,21 @@ export class EditComponent implements OnInit {
         this.socket.on("isSlideFree", (response) => {
             //console.log(response);
             if (response.collaboration_id == this.edit_id) {
-                if (response.status) {
-                    this.toastr.info("One of your collaborators is editing this slide", "INFO");
-                } else {
+                if (response.status || response.user_id == UserService.getUserId()) {
                     if (this.current_slide != null) {
                         if (this.current_content != this.slides[this.current_index].content) {
                             this.socket.emit('update_slide_content', this.edit_id, this.slides[this.current_index].id, this.current_content);
                         }
                     }
                     this.setContent(this.temp_slide, this.temp_index);
+                } else {
+                    this.toastr.info(response.username + " is editing this slide", "INFO");
                 }
             }
         });
 
         this.socket.on("updateSlideContent", (response) => {
-            //console.log(response);
+            //console.log(response);ppp
             let slide_id = response.id;
             let content = response.content;
 
@@ -494,8 +494,8 @@ export class EditComponent implements OnInit {
             for (let i = 0; i < this.slides.length; i++) {
                 if (this.slides[i].id == response) {
                     this.slides.splice(i, 1);
-                    this.current_index = null;
-                    this.current_slide = null;
+                    //this.current_index = null;
+                    //this.current_slide = null;
                     //this.toastr.success("Slide Has Been Deleted", "SUCCESS");
 
                     let initial_slide = {

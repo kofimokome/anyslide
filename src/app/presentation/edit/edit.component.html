@@ -19,7 +19,6 @@
             <div class="col-6">
                 <a href="/">
                     <img src="assets/images/logo-1.png" alt="" style="height: 3em;">
-                    HOME
                 </a>
             </div>
             <div class="col-6">
@@ -45,7 +44,7 @@
 
                 <!-- Modal -->
                 <div class="modal fade" id="sharepresentationmodal" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document" *ngIf="!iscollaborator">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -69,7 +68,9 @@
                                             </div>
                                             <div class="row" style="margin-top:10px;">
                                                 <div class="col-12">
-                                                    <button class="btn btn-info btn-block" (click)="addCollaborator()" *ngIf="selectedUser">+ Add</button>
+                                                    <button class="btn btn-info btn-block" (click)="addCollaborator()"
+                                                            *ngIf="selectedUser">+ Add
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -85,7 +86,12 @@
                                                 <tbody *ngFor="let collaborator of collaborators; let i = index">
                                                 <tr>
                                                     <th>{{collaborator.username}}</th>
-                                                    <th> <button class="btn btn-danger" (click)="removeCollaborator(collaborator.user_id, i)">delete</button></th>
+                                                    <th>
+                                                        <button class="btn btn-danger"
+                                                                (click)="removeCollaborator(collaborator.user_id, i)">
+                                                            delete
+                                                        </button>
+                                                    </th>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -104,7 +110,8 @@
                     </div>
                 </div>
 
-                <button *ngIf="!presentation_deleting && !iscollaborator" class="btn btn-outline-danger" data-toggle="modal"
+                <button *ngIf="!presentation_deleting && !iscollaborator" class="btn btn-outline-danger"
+                        data-toggle="modal"
                         data-target="#deletepresentationmodal">
                     <i class="fa fa-trash"></i>
                     Delete
@@ -117,7 +124,7 @@
 
                 <!-- Modal -->
                 <div class="modal fade" id="deletepresentationmodal" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document" *ngIf="!iscollaborator">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -164,8 +171,16 @@
         <div class="row">
             <div class="col-2" style="min-height: 25em; max-height: 40em; overflow-y: scroll; overflow-x: hidden">
                 <div *ngFor="let slide of slides; let i = index">
-                    <div (click)="isSlideFree(slide, i)" class="presentation-thumbnail">
-                        <div class="presentation-thumnail-image">
+
+                    <div (click)="isSlideFree(slide, i)" class="presentation-thumbnail km-selected"
+                         *ngIf="i == current_index">
+                        <div class="presentation-thumbnail-image">
+                            Slide {{ i + 1}}
+                        </div>
+                    </div>
+
+                    <div (click)="isSlideFree(slide, i)" class="presentation-thumbnail" *ngIf="i != current_index">
+                        <div class="presentation-thumbnail-image">
                             Slide {{ i + 1}}
                         </div>
                     </div>
@@ -183,18 +198,20 @@
                 </div>
             </div>
             <div class="col-8">
-                <div *ngIf="!editorInitialised" style="margin-top: 15%;" class="text-center align-middle">
-                    <img src="assets/images/logo.png" alt="">
-                    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+                <div *ngIf="current_slide != null" style="height: 100%;">
+                    <div *ngIf="!editorInitialised" style="margin-top: 15%;" class="text-center align-middle">
+                        <img src="assets/images/logo.png" alt="">
+                        <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
 
-                    <br>
-                    <h2>Loading Editor... </h2>
+                        <br>
+                        <h2>Loading Editor... </h2>
+                    </div>
+
+                    <editor [(ngModel)]="current_content" apiKey="322jkzr836cni3de8e7i7ct35g21gro5w3qxua7e5tpi977y"
+                            [init]="{plugins: ['lists','link'], height : '100%', toolbar:'undo redo | fontsizeselect fontselect | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' }"
+                            (onInit)="removeLoader()"
+                            style="width: 100%; height: 100%"></editor>
                 </div>
-
-                <editor [(ngModel)]="current_content" apiKey="322jkzr836cni3de8e7i7ct35g21gro5w3qxua7e5tpi977y"
-                        [init]="{plugins: ['lists','link'], height : '100%', toolbar:'undo redo | fontsizeselect fontselect | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' }"
-                        (onInit)="removeLoader()"
-                        style="width: 100%; height: 100%"></editor>
             </div>
             <div class="col-2">
                 <div class="card">
@@ -237,6 +254,15 @@
                                 </div>
                             </div>
                         </div>
+
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 10px;">
+                    <h5 class="card-header">Chat</h5>
+                    <div class="card-body">
+                        Chat History goes here
+
 
                     </div>
                 </div>

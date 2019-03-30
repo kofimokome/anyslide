@@ -186,7 +186,7 @@ io.on('connection', function (socket) {
             let user = new User(user_id, device, username);
             users.push(user);
 
-            logData(user_id + " has been registered ");
+            //logData(user_id + " has been registered ");
 
             logData("A new device: " + socket.id + " assigned to " + username);
             //console.log(users);
@@ -285,7 +285,9 @@ io.on('connection', function (socket) {
                 is_slide_free = true;
                 let data = {
                     collaboration_id: collaboration_id,
-                    status: true,
+                    status: false,
+                    username: users[find_user(collaborators[i].user_id)].username,
+                    user_id: collaborators[i].user_id,
                 };
                 io.to(socket.id).emit('isSlideFree', data);
             }
@@ -298,7 +300,7 @@ io.on('connection', function (socket) {
                     collaborators[i].slide_id = slide_id;
                     let data = {
                         collaboration_id: collaboration_id,
-                        status: false,
+                        status: true,
                     };
                     io.to(socket.id).emit('isSlideFree', data);
                 }

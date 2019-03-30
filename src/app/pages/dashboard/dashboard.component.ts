@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.collaborations = [];
         this.loading = true;
         this.error = false;
         this.name = '';
@@ -39,7 +40,7 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    getPresentations(){
+    getPresentations() {
         let data = {
             user_id: UserService.getUserId(),
         };
@@ -64,7 +65,7 @@ export class DashboardComponent implements OnInit {
             );
     }
 
-    getCollaborations(){
+    getCollaborations() {
         let data = {
             user_id: UserService.getUserId(),
         };
@@ -89,12 +90,11 @@ export class DashboardComponent implements OnInit {
                 },
             );
     }
+
     newPresentation() {
         if (this.name == '') {
-            this.error = true;
-            this.message = "please enter a valid presentation name";
+            this.toastr.error("Please enter a valid presentation name", "ERROR");
         } else {
-            this.error = false;
             let data = {
                 name: this.name,
                 user_id: UserService.getUserId(),
@@ -106,8 +106,8 @@ export class DashboardComponent implements OnInit {
                         if (response.success) {
                             this.router.navigate(['/presentation/edit/' + response.id]);
                         } else {
-                            this.error = true;
-                            this.message = response.message;
+                            this.toastr.error(response.message, "ERROR");
+
                         }
                     },
                     (error) => {

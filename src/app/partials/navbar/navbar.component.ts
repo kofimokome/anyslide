@@ -13,6 +13,7 @@ export class NavbarComponent implements OnInit {
     @ViewChild(HomeComponent) child;
     public isregister;
     public islogin;
+    username: string;
 
     constructor() {
     }
@@ -20,6 +21,9 @@ export class NavbarComponent implements OnInit {
     ngOnInit() {
         this.isregister = false;
         this.islogin = UserService.isAuthenticated();
+        if(this.islogin){
+            this.username = UserService.getUserName();
+        }
     }
 
     switch_buttons() {
