@@ -1,86 +1,115 @@
 <div *ngIf="loading">
-    <div style="margin-top: 15%;" class="text-center align-middle">
-        <img src="assets/images/logo.png" alt="">
-        <i *ngIf="finding_user" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  <div style="margin-top: 15%;" class="text-center align-middle">
+    <img src="assets/images/logo.png" alt="">
+    <i *ngIf="finding_user" class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
 
-        <br>
-        <h2 *ngIf="finding_user">
-            Your Dashboard is Loading
-        </h2>
-        <div *ngIf="!finding_user" class="alert alert-danger text-center">
-            An Error Has Occurred. Please Refresh This Page
-        </div>
+    <br>
+    <h2 *ngIf="finding_user">
+      Your Dashboard is Loading
+    </h2>
+    <div *ngIf="!finding_user" class="alert alert-danger text-center">
+      An Error Has Occurred. Please Refresh This Page
     </div>
+  </div>
 </div>
 
 <div *ngIf="!loading">
-    <div class="container-fluid">
-        <app-navbar></app-navbar>
-    </div>
-    <div class="container-fluid" style="min-height: 550px;">
-        <div class="row">
+  <div class="container-fluid">
+    <app-navbar></app-navbar>
+  </div>
+  <div class="container-fluid" style="min-height: 550px;">
+    <div class="row">
 
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
-                   aria-controls="v-pills-home" aria-selected="true">My Presentations</a>
-                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
-                   aria-controls="v-pills-profile" aria-selected="false">My Collaborations</a>
-            </div>
-            <div class="tab-content" id="v-pills-tabContent">
-                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                     aria-labelledby="v-pills-home-tab">
-                    <div class="container">
-                        <div class="row">
-                            <div *ngFor="let presentation of presentations">
-                                <div class="col-3">
-                                    <a href=""
-                                       routerLink="/presentation/edit/{{presentation.id}}">
-                                        <div class="presentation-thumbnail">
-                                            <div class="presentation-thumbnail-image km-dashboard">
-                                                {{presentation.title}}
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+           aria-controls="v-pills-home" aria-selected="true">My Presentations</a>
+        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+           aria-controls="v-pills-profile" aria-selected="false">My Collaborations</a>
+        <a class="nav-link" id="v-pills-presentations-tab" data-toggle="pill" href="#v-pills-presentations" role="tab"
+           aria-controls="v-pills-presentations" aria-selected="false">Ongoing Presentations</a>
+      </div>
+      <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+             aria-labelledby="v-pills-home-tab">
+          <div class="container">
+            <div class="row">
+              <div *ngFor="let presentation of presentations">
+                <div class="col-3">
+                  <a href=""
+                     routerLink="/presentation/edit/{{presentation.id}}">
+                    <div class="presentation-thumbnail">
+                      <div class="presentation-thumbnail-image km-dashboard">
+                        {{presentation.title}}
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
 
-                            <div class="col-3">
-                                <div class="presentation-thumbnail">
-                                    <div class="presentation-thumbnail-image km-dashboard" style="padding: 20% 6% !important;">
-                                        <input type="text" [(ngModel)]="name" class="form-control" placeholder="Enter Title">
-                                        <button (click)="newPresentation()" class="btn btn-primary btn-block" style="margin-top: 10px;">Create</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+              <div class="col-3">
+                <div class="presentation-thumbnail">
+                  <div class="presentation-thumbnail-image km-dashboard" style="padding: 20% 6% !important;">
+                    <input type="text" [(ngModel)]="name" class="form-control" placeholder="Enter Title">
+                    <button (click)="newPresentation()" class="btn btn-primary btn-block" style="margin-top: 10px;">
+                      Create
+                    </button>
+                  </div>
                 </div>
-                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
-                     aria-labelledby="v-pills-profile-tab">
-                    <div class="container">
-                        <div>
-                            <div *ngIf="collaborations.length <= 0 ">
-                                You do not have any collaboration
-                            </div>
-                            <div *ngFor="let collaboration of collaborations">
-                                <div class="col-3">
-                                    <a href=""
-                                       routerLink="/collaboration/{{collaboration.id}}">
-                                        <div class="presentation-thumbnail">
-                                            <div class="presentation-thumbnail-image km-dashboard">
-                                                {{collaboration.title}}
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+             aria-labelledby="v-pills-profile-tab">
+          <div class="container">
+            <div>
+              <div *ngIf="collaborations.length <= 0 ">
+                You do not have any collaboration
+              </div>
+              <div *ngFor="let collaboration of collaborations">
+                <div class="col-3">
+                  <a href=""
+                     routerLink="/collaboration/{{collaboration.id}}">
+                    <div class="presentation-thumbnail">
+                      <div class="presentation-thumbnail-image km-dashboard">
+                        {{collaboration.title}}
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="v-pills-presentations" role="tabpanel"
+             aria-labelledby="v-pills-presentations">
+          <div class="container">
+            <div>
+              <div *ngIf="ongoing_presentations.length <= 0 ">
+                You do not have any ongoing presentation
+              </div>
+              <div *ngFor="let ongoing_presentation of ongoing_presentations">
+                <div class="col-3">
+                  <a href=""
+                     routerLink="/presentation/{{ongoing_presentation.link}}" target="_blank">
+                    <div class="presentation-thumbnail">
+                      <div *ngFor="let presentation of presentations" class="presentation-thumbnail-image km-dashboard">
+                                              <span *ngIf="presentation.id == ongoing_presentation.id">
+                                              {{presentation.title}}
+                                              </span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div style="margin-top: 50px;">
-        <app-footer></app-footer>
-    </div>
+  </div>
+  <div style="margin-top: 50px;">
+    <app-footer></app-footer>
+  </div>
 </div>
