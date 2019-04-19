@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.collaborations = [];
+    this.ongoing_presentations = [];
     this.loading = true;
     this.error = false;
     this.name = '';
@@ -126,7 +127,7 @@ export class DashboardComponent implements OnInit {
     this.socket.on("presentations", (response) => {
       //console.log(response);
       this.ongoing_presentations = response;
-      console.log(this.ongoing_presentations);
+      //console.log(this.ongoing_presentations);
     });
   }
 
