@@ -125,9 +125,8 @@ export class DashboardComponent implements OnInit {
 
   sockets() {
     this.socket.on("presentations", (response) => {
-      //console.log(response);
       this.ongoing_presentations = response;
-      //console.log(this.ongoing_presentations);
+      console.log(this.ongoing_presentations);
     });
   }
 

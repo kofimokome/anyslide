@@ -170,6 +170,22 @@ io.on('connection', function (socket) {
    *socket.broadcast.to("chat" + chat_rooms[room].id).emit('newMessage', message);
    * */
 
+  function get_presentations() {
+    let presentation_ids = [];
+    for (var i = 1; i < presentations.length; i++) {
+      if (presentations[i].owner_id == users[findDeviceUser(socket.id)].user_id) {
+        let presentation = {
+          link: presentations[i].presentation_id,
+          id: cryptr.decrypt(presentations[i].presentation_id)
+        };
+        presentation_ids.push(presentation);
+      }
+    }
+
+    //console.log(presentation_ids);
+    return presentation_ids;
+  }
+
   /* User Related Functions */
   // Emitted when a user logs in
   socket.on('register_user', function (user_id, username) {
@@ -203,12 +219,18 @@ io.on('connection', function (socket) {
         let user_index = findDeviceUser(socket.id);
         let presentation = new Presentation(cryptr_presentation_id, users[user_index].user_id, socket.id, password);
         presentations.push(presentation);
-        console.log(presentation);
+        //console.log(presentation);
         let result = {status: true, id: cryptr_presentation_id};
         // socket.join("presentation" + cryptr_presentation_id);
-        io.to(socket.id).emit('joinPresentation', result);
+        socket.emit('joinPresentation', result);
         logData(users[user_index].username + " created presentation " + cryptr_presentation_id);
+
+        let presentation_ids = get_presentations();
+        for (let j = 0; j < users[user_index].devices.length; j++) {
+          io.to(users[user_index].devices[j].device_id).emit('presentations', presentation_ids);
+        }
       }
+
     } else {
       let result = {status: false, message: "user not yet registered. Please refresh this page and try again"};
       io.to(socket.id).emit('joinPresentation', result);
@@ -260,18 +282,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('get_presentations', function (user_id) {
-    // owner_id
-    let presentation_ids = [];
-    for (var i = 1; i < presentations.length; i++) {
-      if (presentations[i].owner_id == user_id) {
-        let presentation = {
-          link: presentations[i].presentation_id,
-          id: cryptr.decrypt(presentations[i].presentation_id)
-        };
-        presentation_ids.push(presentation);
-      }
-    }
-    io.to(socket.id).emit('presentations', presentation_ids);
+    io.to(socket.id).emit('presentations', get_presentations());
   });
 
   socket.on('join_collaboration', function (collaboration_id, user_id) {
@@ -353,6 +364,10 @@ io.on('connection', function (socket) {
           io.to(socket.id).emit('presentation' + presentations[i].presentation_id).emit("leavePresentation");
           presentations.splice(i, 1);
         }
+      }
+      let presentation_ids = get_presentations();
+      for (let j = 0; j < users[user_index].devices.length; j++) {
+        io.to(users[user_index].devices[j].device_id).emit('presentations', presentation_ids);
       }
 
       for (let i = 0; i < users[user_index].devices.length; i++) {
