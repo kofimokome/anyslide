@@ -12,6 +12,7 @@ use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\Slide;
 use PhpOffice\PhpPresentation\Shape\RichText;
 
+// emm ok
 
 $pptReader = IOFactory::createReader('PowerPoint2007');
 try {
