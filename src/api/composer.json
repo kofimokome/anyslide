@@ -1,0 +1,14 @@
+{
+    "name": "kofi/api",
+    "description": "Back end API for AnySlide Project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kofi",
+            "email": "mokomekofi@yahoo.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phppresentation": "dev-master"
+    }
+}
