@@ -69,11 +69,13 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <form [formGroup] = "profileForm" (ngSubmit)="onSubmit()">
+                                            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
                                                 <div class="row">
                                                     <div class="col-4">Select File:</div>
                                                     <div class="col-8"><input type="file" class="form-control"
-                                                                              name="upload_file" (change)="onSelectedFile($event)" accept=".pptx"></div>
+                                                                              name="upload_file"
+                                                                              (change)="onSelectedFile($event)"
+                                                                              accept=".pptx"></div>
                                                 </div>
                                                 <div class="row" style="margin-top: 10px;">
                                                     <div class="col-5">Override Content:</div>
@@ -280,9 +282,10 @@
                     </div>
 
                     <editor [(ngModel)]="current_content" apiKey="322jkzr836cni3de8e7i7ct35g21gro5w3qxua7e5tpi977y"
-                            [init]="{plugins: ['lists','link'], height : '100%', toolbar:'undo redo | fontsizeselect fontselect | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent' }"
+                            [init]="tiny_init"
                             (onInit)="removeLoader()"
                             style="width: 100%; height: 100%"></editor>
+                    <input name="image" type="file" id="upload" class="hidden" onchange="" style="display:none">
                 </div>
             </div>
             <div class="col-2">

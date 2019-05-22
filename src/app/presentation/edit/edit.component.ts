@@ -8,6 +8,7 @@ import {SocketService} from "../../services/socket.service";
 import {EditorComponent, EditorModule} from "@tinymce/tinymce-angular";
 import {ToastrService} from 'ngx-toastr';
 
+import * as $ from 'jquery';
 
 @Component({
     selector: 'app-edit',
@@ -38,6 +39,7 @@ export class EditComponent implements OnInit {
     selectedUser: any;
     temp_slide: any;
     temp_index: any;
+    tiny_init: any;
 
     profileForm: FormGroup;
 
@@ -80,6 +82,30 @@ export class EditComponent implements OnInit {
             upload_file: ['']
         });
 
+        this.tiny_init = {
+            plugins: ['lists', 'link', 'image','media'],
+            paste_data_images: true,
+            images_upload_url: environment.apiRoot + 'convert_image.php',
+            height: '100%',
+            file_picker_callback: function (callback, value, meta) {
+                if (meta.filetype == 'image') {
+                    $('#upload').trigger('click');
+                    $('#upload').on('change', function (a) {
+                        var file = a.target.files[0];
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            callback(e.target.result, {
+                                alt: ''
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            },
+            toolbar: 'undo redo | fontsizeselect fontselect | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'
+        };
+
+
     }
 
     onSelectedFile(event) {
@@ -92,7 +118,7 @@ export class EditComponent implements OnInit {
     onSubmit() {
         const formData = new FormData();
         formData.append('user_id', UserService.getUserId());
-        formData.append('presentation_id', this.edit_id)
+        formData.append('presentation_id', this.edit_id);
         formData.append('override', this.profileForm.get('upload_type').value);
         formData.append('file', this.profileForm.get('upload_file').value);
 
@@ -102,7 +128,7 @@ export class EditComponent implements OnInit {
             .subscribe((response: any) => {
                     if (response.success) {
                         //console.log(response);
-                        this.toastr.success("Your Slide Has Been Uploadead Successfully",'Success');
+                        this.toastr.success("Your Slide Has Been Uploadead Successfully", 'Success');
                         this.getSlides();
 
 
