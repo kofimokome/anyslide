@@ -30,7 +30,7 @@
     "cryptr": "^4.0.2",
     "express": "^4.16.3",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "ngx-select2": "^0.2.3",
     "ngx-simple-crypt": "^1.0.1",
     "ngx-toastr": "^9.1.2",
