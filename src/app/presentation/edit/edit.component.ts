@@ -28,6 +28,7 @@ export class EditComponent implements OnInit {
     collaborators: any[];
     editorInitialised;
     saving;
+    uploading;
     presentation_created;
     error;
     slide_deleting;
@@ -55,6 +56,7 @@ export class EditComponent implements OnInit {
         this.slide_creating = false;
         this.loading = true;
         this.saving = false;
+        this.uploading = false;
         this.presentation_created = false;
         this.editorInitialised = false;
         this.error = false;
@@ -120,6 +122,7 @@ export class EditComponent implements OnInit {
     }
 
     onSubmit() {
+        this.uploading = true;
         const formData = new FormData();
         formData.append('user_id', UserService.getUserId());
         formData.append('presentation_id', this.edit_id);
@@ -130,6 +133,7 @@ export class EditComponent implements OnInit {
             headers: new HttpHeaders().set('Access-Control-Allow-Headers', '*')
         })
             .subscribe((response: any) => {
+                    this.uploading = false;
                     if (response.success) {
                         //console.log(response);
                         this.toastr.success("Your Slide Has Been Uploadead Successfully", 'Success');
@@ -146,6 +150,7 @@ export class EditComponent implements OnInit {
                     }
                 },
                 (error) => {
+                    this.uploading = false;
                     this.toastr.error("An Error Occurred Please Try Again Later", "ERROR");
                     //console.error('Failed decline request ', error);
                 },
