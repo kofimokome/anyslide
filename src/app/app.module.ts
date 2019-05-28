@@ -4,6 +4,8 @@ import {AppRoutesModule} from './app-routes.module';
 import {FormsModule} from "@angular/forms";
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { EscapeHtmlPipe } from './pipes/keep-html.pipe';
+
 import {AppComponent} from './app.component';
 import {NotfoundComponent} from "./pages/notfound/notfound.component";
 import {HomeComponent} from "./pages/home/home.component";
@@ -35,6 +37,7 @@ import {FooterComponent} from "./partials/footer/footer.component";
         EditComponent,
         NavbarComponent,
         FooterComponent,
+        EscapeHtmlPipe
     ],
     imports: [
         ReactiveFormsModule,

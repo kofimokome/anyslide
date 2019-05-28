@@ -83,17 +83,21 @@ export class EditComponent implements OnInit {
         });
 
         this.tiny_init = {
-            plugins: ['lists', 'link', 'image','media'],
+            plugins: ['lists', 'link', 'image', 'media'],
             paste_data_images: true,
             images_upload_url: environment.apiRoot + 'convert_image.php',
             height: '100%',
+            content_css: "/assets/css/main.css",
+            extended_valid_elements: "svg[*],defs[*],pattern[*],desc[*],metadata[*],g[*],mask[*],path[*],line[*],marker[*],rect[*],circle[*],ellipse[*],polygon[*],polyline[*],linearGradient[*],radialGradient[*],stop[*],image[*],view[*],text[*],textPath[*],title[*],tspan[*],glyph[*],symbol[*],switch[*],use[*]",
             file_picker_callback: function (callback, value, meta) {
                 if (meta.filetype == 'image') {
                     $('#upload').trigger('click');
                     $('#upload').on('change', function (a) {
+                        // @ts-ignore
                         var file = a.target.files[0];
                         var reader = new FileReader();
                         reader.onload = function (e) {
+                            // @ts-ignore
                             callback(e.target.result, {
                                 alt: ''
                             });

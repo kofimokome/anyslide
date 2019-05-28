@@ -1,16 +1,9 @@
 <?php
+
 include_once("includes/header.php");
 include_once("includes/functions.php");
-
-require_once 'vendor/phpoffice/common/src/Common/Autoloader.php';
-require_once 'vendor/phpoffice/phppresentation/src/PhpPresentation/Autoloader.php';
-
-\PhpOffice\PhpPresentation\Autoloader::register();
-\PhpOffice\Common\Autoloader::register();
-
-use PhpOffice\PhpPresentation\IOFactory;
-use PhpOffice\PhpPresentation\Slide;
-use PhpOffice\PhpPresentation\Shape\RichText;
+/*ini_set('display_errors',1);
+error_reporting(E_ALL);*/
 
 if ($_FILES && $_FILES['file']['tmp_name']) {
 
@@ -24,52 +17,65 @@ if ($_FILES && $_FILES['file']['tmp_name']) {
     $user_id = $_POST['user_id'];
     $presentation_id = $_POST['presentation_id'];
 
-    $pptReader = IOFactory::createReader('PowerPoint2007');
-    try {
-        $oPHPPresentation = $pptReader->load($_FILES['file']['tmp_name']);
-        $property = $oPHPPresentation->getDocumentProperties();
-        $slides = $oPHPPresentation->getAllSlides();
-        $content = array();
-        foreach ($slides as $slide_k => $slide_v) {
-            $shapes = $slides[$slide_k]->getShapeCollection();
-            foreach ($shapes as $shape_k => $shape_v) {
-                $shape = $shapes[$shape_k];
-                $temp = array();
+    // upload the file to the temporary directory
+    $target_dir = "uploads/";
+    $target_file = $target_dir . time() . '.pptx';
 
-                if ($shape instanceof PhpOffice\PhpPresentation\Shape\RichText) {
-                    $paragraphs = $shapes[$shape_k]->getParagraphs();
-                    foreach ($paragraphs as $paragraph_k => $paragraph_v) {
-                        $text_elements = $paragraph_v->getRichTextElements();
-                        foreach ($text_elements as $text_element_k => $text_element_v) {
-                            $text = $text_element_v->getText();
-                            array_push($temp, $text);
-                        }
-                    }
-                }
+
+    if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.docconversionapi.com/convert?outputFormat=HTML",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => array('optionsJSON' => '{}', 'inputFile' => new CURLFILE($target_file)),
+            CURLOPT_HTTPHEADER => array(
+                "X-ApplicationID: bc2e4fc3-2e23-46fc-8394-ec498e81f3c0",
+                "X-SecretKey: 810d9871-103e-4c7b-b615-ddff636828b8"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo json_encode(array('success' => false, 'message' => 'An Error Occurred While Processing Your File'));
+        } else {
+// todo: make sure there is at least one slide
+            if ($override) {
+                $query = "delete from slides where presentation_id = {$presentation_id}";
+                $con->query($query);
             }
-            array_push($content, $temp);
-        }
 
-        if ($override) {
-            $query = "delete from slides where presentation_id = {$presentation_id}";
-            $con->query($query);
-        }
+            $dom = new DOMDocument();
 
-        foreach ($content as $co) {
-            $text = '';
-            foreach ($co as $c) {
-                $text .= ($c . "<p>");
-            }
-            if (trim($text) != '') {
-                // avoid creating many empty slides
+            $dom->loadHTML($response);
+
+            $elements = $dom->getElementsByTagName("div");
+
+            $xpath = new DOMXPath($dom);
+            $slides = $xpath->query("//div[@class='slide']");
+
+            foreach ($slides as $slide) {
+                $text = $dom->saveHTML($slide);
                 $query = "insert into slides values (null, {$presentation_id},'{$text}',{$user_id},0,now(), now())";
                 $con->query($query);
             }
-        }
-        echo json_encode(array('success' => true, 'message' => "OK"));
 
-    } catch (Exception $e) {
-        //echo $e;
+            unlink($target_file);
+
+            echo json_encode(array('success' => true, 'message' => "OK"));
+        }
+    } else {
+        echo json_encode(array('success' => false, 'message' => 'An Error Occurred While Processing Your File',));
     }
 
 } else {

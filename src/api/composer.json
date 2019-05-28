@@ -9,6 +9,7 @@
         }
     ],
     "require": {
-        "phpoffice/phppresentation": "dev-master"
+        "phpoffice/phppresentation": "dev-master",
+        "convertio/convertio-php": "^0.4.0"
     }
 }

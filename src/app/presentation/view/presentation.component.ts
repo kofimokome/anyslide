@@ -39,7 +39,7 @@ export class PresentationComponent implements OnInit {
             });
         this.route.params.subscribe((params: ParamMap) => {
             this.presentation_link = params['id'];
-            console.log(this.presentation_link);
+            //console.log(this.presentation_link);
         });
         this.socket.emit("join_presentation", this.presentation_link, false);
         //this.getSlides();
@@ -107,6 +107,13 @@ export class PresentationComponent implements OnInit {
         style.href = "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/theme/black.min.css";
         //style.href = "../node_modules/reveal.js/css/theme/black.css";
         head.append(style);
+
+        style = document.createElement('link');
+        style.rel = "stylesheet";
+        style.href = "/assets/css/main.css";
+        //style.href = "../node_modules/reveal.js/css/theme/black.css";
+        head.append(style);
+
         /*let body = <HTMLDivElement> document.body;
         let script = document.createElement('script');
 
