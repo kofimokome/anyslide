@@ -37,7 +37,7 @@
     "reveal.js": "^3.7.0",
     "rxjs": "^6.0.0",
     "select2": "^4.0.6-rc.1",
-    "socket.io": "^2.1.1",
+    "socket.io": "^2.4.0",
     "socket.io-client": "^2.1.1",
     "tinymce": "^5.0.2",
     "zone.js": "~0.8.26"
