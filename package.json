@@ -34,7 +34,7 @@
     "ngx-select2": "^0.2.3",
     "ngx-simple-crypt": "^1.0.1",
     "ngx-toastr": "^9.1.2",
-    "reveal.js": "^3.7.0",
+    "reveal.js": "^4.3.0",
     "rxjs": "^6.0.0",
     "select2": "^4.0.6-rc.1",
     "socket.io": "^2.1.1",
