@@ -28,7 +28,7 @@
     "core-js": "^2.5.4",
     "crypto": "^1.0.1",
     "cryptr": "^4.0.2",
-    "express": "^4.16.3",
+    "express": "^4.18.2",
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
     "ngx-select2": "^0.2.3",
